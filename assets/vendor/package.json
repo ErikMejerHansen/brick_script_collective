@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "scratch-blocks": "^0.2.0-prerelease.20230818064858",
+    "scratch-storage": "^2.2.1",
+    "scratch-vm": "^1.6.3"
+  }
+}

@@ -20,8 +20,10 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
 ## ToDos
 [] Setup ScratchVM and ScratchBlocks
+- Dependencies added
 [] Typescript integration
   - Should just work? Throw stuff into /assets/js/
+  - It _does_ just work!
 [] Leader selection
 [] Robot connections
 [] LWP Parser
