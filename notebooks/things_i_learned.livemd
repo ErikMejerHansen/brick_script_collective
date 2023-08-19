@@ -1,0 +1,22 @@
+# Things I learned about Phoenix
+
+## Javascript/Typescript integration is so easy
+
+* `npm --save` in `assets/vendor` just works
+* Adding Typescript to `assets/js` just works
+* Super helpful error messages 😍
+
+> Could not resolve "foo"
+> 
+> Use the relative path "./foo" to reference the file "js/foo.ts". Without the leading "./", 
+>  the path "foo" is being interpreted as a package path instead.
+
+* Live Reload works for JS as well
+
+## Untill it isn't
+
+![](images/scratch_build_issues.png)
+
+<!-- livebook:{"break_markdown":true} -->
+
+#### Lesson: Have seperate project for complex js builds, then import _that_!
