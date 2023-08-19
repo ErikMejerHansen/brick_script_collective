@@ -1,3 +1,4 @@
+.DS_Store
 assets/vendor/node_modules/
 
 # The directory Mix will write compiled artifacts to.
