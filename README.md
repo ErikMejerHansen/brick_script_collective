@@ -16,3 +16,17 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+
+## ToDos
+[] Setup ScratchVM and ScratchBlocks
+[] Typescript integration
+  - Should just work? Throw stuff into /assets/js/
+[] Leader selection
+[] Robot connections
+[] LWP Parser
+[] LWP Message Builder
+[] Handle PortAttachIO Flow
+[] Logo
+[] Icons
+[] Attach Robot/(Creature?)
