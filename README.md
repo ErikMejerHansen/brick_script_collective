@@ -31,12 +31,24 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   - It _does_ just work!
 - [ ] State sync-ing
   - [ ] Canvas state
-    - [ ] Add block callback?
-    - [ ] Delete block callback?
-    - [ ] Move block callback
     - [ ] Strategies:
       - [ ] Load project - Loading a project will cause the workspace change listener to fire. This can cause an infinite loop
       - [ ] Grab workspace changes and share them across nodes.
+      - [ ] Just sending the raw events from blockly does not seem viable as they are JS classes and don't serialize well.
+      - [ ] Towards CRDT (y.js)
+        - [ ] Listen to workspace events and broadcast them
+          - [ ] The create event will need extra serialization because the .xml field contains a DOM element
+          - [ ] scratch-vm expects to be able to parse a HTML/XML string, modify it so that it can _also_ work with a serialized XML string (Do I need to keep the old functionality alive?)
+            - [ ] Might be an option to use htmlparser2 to serialize the event xml?
+          - [ ] This should now be functional but won't be conflict free and have no way of sharing full state
+          - [ ] CRDT:
+            - [ ] Each browser creates a yjs Doc. 
+              - [ ] The block structure is a list of lists. 
+                - [ ] Blocks are, type, coordinate, inputs
+              - [ ] workspace event is turned into yjs Doc change
+              - [ ] doc changes are broadcast
+              - [ ] Need to be able to convert list of changes to workspace events
+              - [ ] Need to be able to take full yjs doc state into VM (or perhaps just replay allllll the changes). Needed for new joiners. 
     - [ ] Full state sync? What happens if someone joins late?
 - [ ] Leader selection
 - [ ] Robot connections
@@ -45,6 +57,8 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 - [ ] Handle PortAttachIO Flow
 - [ ] Logo
 - [ ] Icons
+- [ ] Deploy on fly.io
+  - [ ] brick_script_collective should install deps from github
 - [ ] Attach Robot/(Creature?)
 - [ ] Show users online (Phoenix Presence)
   - [ ] And if they have connected a robot

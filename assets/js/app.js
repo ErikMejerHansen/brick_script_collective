@@ -21,6 +21,7 @@ import "phoenix_html"
 import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
+import { workspace_update_callback, default as channel_socket, channel } from "./workspace_socket.js"
 
 import { boo } from "./foo"
 
@@ -43,4 +44,4 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
-boo()
+boo(workspace_update_callback, channel)
