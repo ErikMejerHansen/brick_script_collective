@@ -37,4 +37,8 @@ brick_script_collective-*.tar
 # In case you use Node.js/npm, you want to ignore these.
 npm-debug.log
 /assets/node_modules/
+/assets/vendor/node_modules/
 
+
+/rel/
+/assets/vendor/main.js

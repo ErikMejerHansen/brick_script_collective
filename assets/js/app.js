@@ -23,7 +23,7 @@ import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import { workspace_update_callback, default as channel_socket, channel } from "./workspace_socket.js"
 
-import { boo } from "./foo"
+import { connectToScratch } from "./scratch_connection"
 
 
 
@@ -44,4 +44,4 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
-boo(workspace_update_callback, channel)
+connectToScratch(workspace_update_callback, channel)

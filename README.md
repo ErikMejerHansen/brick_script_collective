@@ -1,22 +1,14 @@
 # BrickScriptCollective
 
-To start your Phoenix server:
+I like BlockRobotsCollective as a new name!
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Release flow
+This is dumb....
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+copy `main.js` from `assets/vendor/node_modules/brick_script_collective/dist/main.js` to `assets/vendor/`
+update the import in `assets/js/foo.ts` to point to `main.js` (Just switch the commented lines)
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
-
+run `flyctl deploy`
 
 ## ToDos
 [] Setup ScratchVM and ScratchBlocks
