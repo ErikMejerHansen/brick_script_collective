@@ -10,6 +10,10 @@ update the import in `assets/js/foo.ts` to point to `main.js` (Just switch the c
 
 run `flyctl deploy`
 
+## Pallete
+
+https://coolors.co/abe188-f7ef99-f1bb87-f78e69-5d675b
+
 ## ToDos
 [] Setup ScratchVM and ScratchBlocks
   - [x] Dependencies added

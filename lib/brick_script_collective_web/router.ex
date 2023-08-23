@@ -14,10 +14,11 @@ defmodule BrickScriptCollectiveWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", BrickScriptCollectiveWeb do
+  scope "/" do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
+    live "/", BrickScriptCollectiveWeb.CanvasLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
@@ -38,7 +39,6 @@ defmodule BrickScriptCollectiveWeb.Router do
       pipe_through :browser
 
       live_dashboard "/dashboard", metrics: BrickScriptCollectiveWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
 end
