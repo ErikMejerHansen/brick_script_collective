@@ -1,4 +1,7 @@
 <div class="grid grid-cols-10 gap-4">
-  <div id="blocklyDiv" class="h-screen col-span-9" phx-hook="ScratchHook"></div>
-  <div>side bar</div>
+  <div id="blocklyDiv" class="h-screen col-span-9" phx-hook="ScratchHook" phx-update="ignore">
+  </div>
+  <div id="connected_users" phx-update="stream">
+    <div :for={{dom_id, name} <- @streams.connected_users} id={dom_id}><%= name %></div>
+  </div>
 </div>

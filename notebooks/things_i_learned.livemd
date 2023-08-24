@@ -20,3 +20,9 @@
 <!-- livebook:{"break_markdown":true} -->
 
 #### Lesson: Have seperate project for complex js builds, then import _that_!
+
+## Section
+
+* phx-update="ignore" when you want Phoenix to keep away from a DOM element
+
+* There is a symmetry between the "joined" and "leaved" structure you get in presence_diff messages and `stream_delete_by_dom_id` and `stream_insert`

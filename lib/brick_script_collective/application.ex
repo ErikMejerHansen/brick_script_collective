@@ -15,9 +15,9 @@ defmodule BrickScriptCollective.Application do
       # Start Finch
       {Finch, name: BrickScriptCollective.Finch},
       # Start the Endpoint (http/https)
-      BrickScriptCollectiveWeb.Endpoint
-      # Start a worker by calling: BrickScriptCollective.Worker.start_link(arg)
-      # {BrickScriptCollective.Worker, arg}
+      BrickScriptCollectiveWeb.Endpoint,
+      # Start presence
+      BrickScriptCollective.Presence
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
