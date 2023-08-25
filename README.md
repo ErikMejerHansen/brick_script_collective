@@ -18,17 +18,17 @@ https://coolors.co/abe188-f7ef99-f1bb87-f78e69-5d675b
 [] Setup ScratchVM and ScratchBlocks
   - [x] Dependencies added
   - [x] VM running
-  - [ ] Blocks
-    - [ ] any - triggers when true for any robot/sensor
-    - [ ] all - triggers when true for all robots/sensors
-    - [ ] most - triggers when true for most robots/sensors
+  - [x] Blocks
+    - [x] any - triggers when true for any robot/sensor
+    - [x] all - triggers when true for all robots/sensors
+    - [x] most - triggers when true for most robots/sensors
 [x] Typescript integration 
   - Should just work? Throw stuff into /assets/js/
   - It _does_ just work!
 - [ ] State sync-ing
   - [ ] Canvas state
     - [ ] Strategies:
-      - [ ] Load project - Loading a project will cause the workspace change listener to fire. This can cause an infinite loop
+      - [x] Load project - Loading a project will cause the workspace change listener to fire. This can cause an infinite loop
       - [ ] Grab workspace changes and share them across nodes.
       - [ ] Just sending the raw events from blockly does not seem viable as they are JS classes and don't serialize well.
       - [ ] Towards CRDT (y.js)
@@ -47,19 +47,22 @@ https://coolors.co/abe188-f7ef99-f1bb87-f78e69-5d675b
               - [ ] Need to be able to take full yjs doc state into VM (or perhaps just replay allllll the changes). Needed for new joiners. 
     - [ ] Full state sync? What happens if someone joins late?
 - [ ] Leader selection
+  - [ ] Only start VM if leader
+  - [ ] Leader changeover
 - [x] Robot connections
 - [ ] LWP Parser
 - [ ] LWP Message Builder
 - [ ] Handle PortAttachIO Flow
-- [ ] Logo
-- [ ] Icons
-- [ ] Deploy on fly.io
-  - [ ] brick_script_collective should install deps from github
+- [x] Logo
+- [x] Icons
+- [x] Deploy on fly.io
+  - [x] Manual process
+  - [ ] Automatic
 - [ ] Attach Robot/(Creature?)
 - [ ] Show users online (Phoenix Presence)
-  - [ ] And if they have connected a robot
+  - [x] And if they have connected a robot
     - [ ] Show robot capabilities: Eye for color, ruler for distance sensor, gear for motor
-      - [ ] In presence meta data?
+      - [x] In presence meta data?
 
 
 # Design notes

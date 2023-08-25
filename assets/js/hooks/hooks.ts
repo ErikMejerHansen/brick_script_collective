@@ -9,6 +9,7 @@ const scratchHook = {
 }
 
 const connectToRobot = async (connectedCallback) => {
+
     const primaryServiceUuid = "00001623-1212-efde-1623-785feabcd123"
     const primaryCharacteristic = "00001624-1212-efde-1623-785feabcd123"
     let device, characteristic;

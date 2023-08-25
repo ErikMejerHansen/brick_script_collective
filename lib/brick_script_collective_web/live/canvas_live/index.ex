@@ -6,6 +6,7 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    # this is a bit of a mess!
     if connected?(socket) do
       {user_name, _} = BrickScriptCollective.unique_name_and_color()
 
@@ -14,6 +15,7 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
         |> assign(:user_name, user_name)
 
       Presence.track(self(), "users", socket.assigns[:user_name], %{robot_connected: false})
+      # Subscribe should only be called once!
       Phoenix.PubSub.subscribe(PubSub, "users")
 
       connected_users = Presence.list("users") |> Enum.map(&presence_to_view_model/1)
