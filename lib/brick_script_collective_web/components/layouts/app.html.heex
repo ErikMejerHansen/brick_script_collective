@@ -4,11 +4,15 @@
       <a href="/">
         <img src={~p"/images/logo.svg"} width="200" />
       </a>
-
-      <button class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-brand hover:bg-base py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80"
-      ]}>
+      <button
+        class={[
+          "phx-submit-loading:opacity-75 rounded-lg bg-brand hover:bg-base py-2 px-3",
+          "text-sm font-semibold leading-6 text-white active:text-white/80"
+        ]}
+        phx-click={JS.dispatch("robot:connect")}
+        id="connect_button"
+        phx-hook="BluetoothHook"
+      >
         <.icon name="hero-plus" class="h-8 w-8" />Connect Robot
       </button>
     </div>

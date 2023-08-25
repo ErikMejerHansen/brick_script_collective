@@ -47,7 +47,7 @@ https://coolors.co/abe188-f7ef99-f1bb87-f78e69-5d675b
               - [ ] Need to be able to take full yjs doc state into VM (or perhaps just replay allllll the changes). Needed for new joiners. 
     - [ ] Full state sync? What happens if someone joins late?
 - [ ] Leader selection
-- [ ] Robot connections
+- [x] Robot connections
 - [ ] LWP Parser
 - [ ] LWP Message Builder
 - [ ] Handle PortAttachIO Flow
@@ -59,6 +59,7 @@ https://coolors.co/abe188-f7ef99-f1bb87-f78e69-5d675b
 - [ ] Show users online (Phoenix Presence)
   - [ ] And if they have connected a robot
     - [ ] Show robot capabilities: Eye for color, ruler for distance sensor, gear for motor
+      - [ ] In presence meta data?
 
 
 # Design notes
