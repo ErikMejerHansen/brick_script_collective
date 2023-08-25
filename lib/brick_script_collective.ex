@@ -9,10 +9,15 @@ defmodule BrickScriptCollective do
   alias BrickScriptCollectiveWeb.Fruits
   alias BrickScriptCollectiveWeb.Colors
 
-  def unique_name(),
-    do:
-      (Colors.random_color() <> " " <> Fruits.random_fruit())
+  def unique_name_and_color() do
+    {color_name, _} = Colors.random_color()
+
+    user_name =
+      (color_name <> " " <> Fruits.random_fruit())
       |> String.split(" ")
       |> Enum.map(&String.capitalize/1)
       |> Enum.join()
+
+    {user_name, color_name}
+  end
 end

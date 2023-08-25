@@ -152,7 +152,7 @@ defmodule BrickScriptCollectiveWeb.Colors do
 
   def random_color() do
     @colors
-    |> Map.keys()
+    |> Map.to_list()
     |> Enum.random()
   end
 end

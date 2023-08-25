@@ -9,36 +9,45 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      Presence.track(self(), "users", BrickScriptCollective.unique_name(), %{status: "tinkering"})
+      {user_name, user_color} = BrickScriptCollective.unique_name_and_color()
+
+      Presence.track(self(), "users", user_name, %{accent: user_color})
       Phoenix.PubSub.subscribe(PubSub, "users")
     end
 
-    connected_users = Presence.list("users") |> Enum.map(&elem(&1, 0))
+    connected_users = Presence.list("users") |> Enum.map(&presence_to_view_model/1)
 
     {:ok,
      socket
-     |> stream_configure(:connected_users, dom_id: & &1)
+     |> stream_configure(:connected_users, dom_id: & &1[:dom_id])
      |> stream(:connected_users, connected_users)}
   end
 
   @impl true
   def handle_info(%{payload: %{joins: joins, leaves: leaves}}, socket) do
-    # IO.inspect("Handle info")
-    # IO.inspect(Presence.list("users"))
-    # IO.inspect(Map.keys(joins))
-    # IO.inspect(Map.keys(leaves))
-
     socket =
       leaves
-      |> Map.keys()
-      |> Enum.reduce(socket, &stream_delete_by_dom_id(&2, :connected_users, &1))
+      |> Enum.map(&presence_to_view_model/1)
+      |> Enum.reduce(socket, fn leaver, acc ->
+        stream_delete_by_dom_id(acc, :connected_users, leaver.dom_id)
+      end)
 
     socket =
       joins
-      |> Map.keys()
-      |> Enum.reduce(socket, &stream_insert(&2, :connected_users, &1))
+      |> Enum.map(&presence_to_view_model/1)
+      |> Enum.reduce(socket, fn joiner, acc ->
+        stream_insert(acc, :connected_users, joiner)
+      end)
 
     {:noreply, socket}
+  end
+
+  defp presence_to_view_model({user_name, %{metas: [%{accent: accent, phx_ref: ref}]}}) do
+    %{
+      dom_id: ref,
+      name: user_name,
+      accent: accent
+    }
   end
 
   # @impl true

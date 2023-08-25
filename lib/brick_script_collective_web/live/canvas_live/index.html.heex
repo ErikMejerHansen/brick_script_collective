@@ -1,7 +1,19 @@
 <div class="grid grid-cols-10 gap-4">
   <div id="blocklyDiv" class="h-screen col-span-9" phx-hook="ScratchHook" phx-update="ignore">
   </div>
-  <div id="connected_users" phx-update="stream">
-    <div :for={{dom_id, name} <- @streams.connected_users} id={dom_id}><%= name %></div>
+  <div class="flex flex-1 flex-col">
+    <h1 class="text-xl font-light underline text-center py-4">Creators</h1>
+    <div id="connected_users" phx-update="stream" class="scroll-smooth scroll-auto">
+      <button
+        :for={{dom_id, %{name: name}} <- @streams.connected_users}
+        id={dom_id}
+        class={[
+          "rounded-lg bg-base hover:bg-yellow py-2 px-3 mt-2",
+          "text-sm font-semibold leading-6 text-white active:text-white/80"
+        ]}
+      >
+        <%= name %>
+      </button>
+    </div>
   </div>
 </div>
