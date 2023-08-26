@@ -5,19 +5,14 @@
     <h1 class="text-xl font-bold text-brand underline text-center py-4">Tinkerers</h1>
 
     <div id="connected_users" phx-update="stream" class="scroll-smooth scroll-auto">
-      <div
-        :for={
-          {dom_id, %{name: name, robot_connected: robot_connected}} <- @streams.connected_users
-        }
-        id={dom_id}
-      >
+      <div :for={{dom_id, %{name: name, robot: robot}} <- @streams.connected_users} id={dom_id}>
         <button class={[
           "rounded-lg bg-base hover:bg-yellow py-2 px-3 mt-2",
           "text-sm font-semibold leading-6 text-white active:text-white/80"
         ]}>
           <%= name %>
         </button>
-        <div :if={robot_connected}>🤖</div>
+        <div :if={robot}>🤖</div>
       </div>
     </div>
   </div>

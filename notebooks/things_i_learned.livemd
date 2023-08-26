@@ -26,3 +26,15 @@
 * phx-update="ignore" when you want Phoenix to keep away from a DOM element
 
 * There is a symmetry between the "joined" and "leaved" structure you get in presence_diff messages and `stream_delete_by_dom_id` and `stream_insert`
+
+<!-- livebook:{"break_markdown":true} -->
+
+<!-- Learn more at https://mermaid-js.github.io/mermaid -->
+
+```mermaid
+graph TD;
+  ?-->Connected;
+  A-->C;
+  B-->D;
+  C-->D;
+```

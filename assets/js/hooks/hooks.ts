@@ -19,9 +19,9 @@ const connectToRobot = async (connectedCallback) => {
         }]
     });
 
-    console.log("Connecting")
+    console.log("Connecting", device)
     const server = await device.gatt.connect();
-    connectedCallback()
+    connectedCallback(device.id)
     console.log("Server", server)
     const service =
         await server.getPrimaryService(primaryServiceUuid);
@@ -38,14 +38,16 @@ const connectToRobot = async (connectedCallback) => {
 
     console.log("starting notifications")
     characteristic.startNotifications()
+    console.log(characteristic)
+
 }
 const bluetoothHook = {
     mounted() {
-        const robotConnectedCallback = () => {
-            this.pushEvent("robot-connected")
+        const robotConnectedCallback = (id) => {
+            this.pushEvent("robot-connected", id)
         }
         window.addEventListener("robot:connect", (event) => {
-            console.log("connect!")
+            console.log("connect!", event)
             connectToRobot(robotConnectedCallback).then(() => { console.log("Connected?") })
         })
     }

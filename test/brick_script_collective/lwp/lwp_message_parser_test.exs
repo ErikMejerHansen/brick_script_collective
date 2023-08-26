@@ -137,3 +137,45 @@ end
 
 # small motor
 # Parameters: %{"0" => 15, "1" => 0, "10" => 0, "11" => 0, "12" => 0, "13" => 3, "14" => 16, "2" => 4, "3" => 0, "4" => 1, "5" => 65, "6" => 0, "7" => 1, "8" => 0, "9" => 0}
+
+# Port info response force sensor
+# Parameters: %{"0" => 11, "1" => 0, "10" => 0, "2" => 67, "3" => 0, "4" => 1, "5" => 6, "6" => 7, "7" => 63, "8" => 0, "9" => 0
+# %{
+#   "0" => 11,
+#   "1" => 0,
+#   "2" => 67,
+#   "3" => 0,
+#   "4" => 1, # in raw mode
+#   "5" => 6,
+#   "6" => 7,
+#   "7" => 63,
+#   "8" => 0,
+#   "9" => 0
+#   "10" => 0,
+# }
+
+# Port info respone empty port
+# Parameters: %{"0" => 5, "1" => 0, "2" => 5, "3" => 33, "4" => 6}
+
+# Port mode info mode combinations
+# Parameters: %{"0" => 7, "1" => 0, "2" => 67, "3" => 0, "4" => 2, "5" => 63, "6" => 0}
+
+# color sensor port mode response
+# %{
+#   "0" => 11, length
+#   "1" => 0, hub id
+#   "2" => 67, message type: Port information type
+#   "3" => 0, Mode ifo
+#   "4" => 1, Capabilities: input
+#   "5" => 7,  Number of modes
+#   "6" => 10,
+#   "7" => 247,
+#   "8" => 1,
+#   "9" => 8
+#   "10" => 0,
+# }
+
+# Mode info
+# %{"0" => 7, "1" => 0, "2" => 67, "3" => 0, "4" => 2, "5" => 99, "6" => 0}
+
+# Color sensor seems to be in reflectivity mode

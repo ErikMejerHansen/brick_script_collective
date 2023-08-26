@@ -12,7 +12,8 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
 
   @impl true
   def handle_in("lwp_message", payload, socket) do
-    IO.inspect(self())
+    IO.inspect(payload)
+
     {:noreply, socket}
   end
 

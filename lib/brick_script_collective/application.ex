@@ -17,7 +17,9 @@ defmodule BrickScriptCollective.Application do
       # Start the Endpoint (http/https)
       BrickScriptCollectiveWeb.Endpoint,
       # Start presence
-      BrickScriptCollective.Presence
+      BrickScriptCollective.Presence,
+      # Start robots state agent
+      BrickScriptCollective.RobotsState
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

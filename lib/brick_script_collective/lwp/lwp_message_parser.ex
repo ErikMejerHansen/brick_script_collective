@@ -1,6 +1,6 @@
 defmodule BrickScriptCollective.Lwp.LwpMessageParser do
   def parse(message) do
-    message = convert_to_list(message) |> IO.inspect()
+    message = convert_to_list(message)
     header = message |> Enum.take(3) |> parse_common_message_header()
     payload = parse(header.type, message |> Enum.drop(3))
 
@@ -52,23 +52,12 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParser do
     %{event: :attached_virtual, port: port_id, io_type: parse_io_type(type_msb, type_lsb)}
   end
 
-  defp parse_io_type(61, _type_lsb) do
-    :color_sensor
-  end
-
-  defp parse_io_type(63, _type_lsb) do
-    :force_sensor
-  end
-
-  defp parse_io_type(65, _type_lsb) do
-    :small_motor
-  end
-
-  # defp parse_io_type(58, _type_lsb) do
-  #   :color_sensor
-  # end
-
-  defp parse_io_type(_, _type_lsb) do
-    :unknown
+  defp parse_io_type(type_lsb, _type_msb) do
+    case type_lsb do
+      0x3D -> :color_sensor
+      0x3F -> :force_sensor
+      0x41 -> :small_motor
+      _ -> :unknown
+    end
   end
 end
