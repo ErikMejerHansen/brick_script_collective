@@ -56,14 +56,13 @@ socket.connect()
 // Now that you are connected, you can join channels with a topic.
 // Let's assume you have a channel with a topic named `room` and the
 // subtopic is its id - in this case 42:
-export let channel = socket.channel("lwp", {})
-channel.join()
+export let lwpChannel = socket.channel("lwp", {})
+lwpChannel.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
 export const lwp_message_callback = (message) => {
-  channel.push("lwp_message", message)
+  lwpChannel.push("lwp_message", message)
 }
-
 
 export default socket

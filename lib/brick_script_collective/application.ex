@@ -12,12 +12,12 @@ defmodule BrickScriptCollective.Application do
       BrickScriptCollectiveWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: BrickScriptCollective.PubSub},
+      # Start presence
+      BrickScriptCollective.Presence,
       # Start Finch
       {Finch, name: BrickScriptCollective.Finch},
       # Start the Endpoint (http/https)
       BrickScriptCollectiveWeb.Endpoint,
-      # Start presence
-      BrickScriptCollective.Presence,
       # Start robots state agent
       BrickScriptCollective.RobotsState
     ]

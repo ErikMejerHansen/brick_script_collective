@@ -1,4 +1,4 @@
-import { lwp_message_callback } from "../lwp_socket"
+import { lwpChannel, lwp_message_callback } from "../lwp_socket"
 import { workspace_update_callback, channel } from "../workspace_socket.js"
 import { connectToScratch } from "../scratch_connection"
 
@@ -22,6 +22,7 @@ const connectToRobot = async (connectedCallback) => {
     console.log("Connecting", device)
     const server = await device.gatt.connect();
     connectedCallback(device.id)
+
     console.log("Server", server)
     const service =
         await server.getPrimaryService(primaryServiceUuid);
@@ -38,16 +39,22 @@ const connectToRobot = async (connectedCallback) => {
 
     console.log("starting notifications")
     characteristic.startNotifications()
-    console.log(characteristic)
+
+    lwpChannel.on("to_robot", (message) => {
+        // TODO: Has to wait for promise to resolve before writing the next one
+        characteristic.writeValueWithResponse(message)
+    })
 
 }
+
 const bluetoothHook = {
     mounted() {
         const robotConnectedCallback = (id) => {
             this.pushEvent("robot-connected", id)
         }
+
+
         window.addEventListener("robot:connect", (event) => {
-            console.log("connect!", event)
             connectToRobot(robotConnectedCallback).then(() => { console.log("Connected?") })
         })
     }

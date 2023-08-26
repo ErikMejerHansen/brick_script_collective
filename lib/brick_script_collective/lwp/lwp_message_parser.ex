@@ -40,8 +40,8 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParser do
     %{length: length, type: message_type}
   end
 
-  defp parse(:hub_attached_io, [port_id, 0x00, type_msb, type_lsb | _rest]) do
-    %{event: :detached, port: port_id, io_type: parse_io_type(type_msb, type_lsb)}
+  defp parse(:hub_attached_io, [port_id, 0x00 | _rest]) do
+    %{event: :detached, port: port_id}
   end
 
   defp parse(:hub_attached_io, [port_id, 0x01, type_msb, type_lsb | _rest]) do
@@ -50,6 +50,10 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParser do
 
   defp parse(:hub_attached_io, [port_id, 0x02, type_msb, type_lsb | _rest]) do
     %{event: :attached_virtual, port: port_id, io_type: parse_io_type(type_msb, type_lsb)}
+  end
+
+  defp parse(_, _) do
+    %{event: :ignored}
   end
 
   defp parse_io_type(type_lsb, _type_msb) do

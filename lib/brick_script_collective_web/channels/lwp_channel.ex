@@ -1,4 +1,6 @@
 defmodule BrickScriptCollectiveWeb.LWPChannel do
+  alias BrickScriptCollective.RobotsState
+  alias BrickScriptCollective.Lwp.LwpMessageParser
   use BrickScriptCollectiveWeb, :channel
 
   @impl true
@@ -12,7 +14,21 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
 
   @impl true
   def handle_in("lwp_message", payload, socket) do
-    IO.inspect(payload)
+    message = LwpMessageParser.parse(payload)
+
+    IO.inspect("Got message")
+
+    if message.header.type == :hub_attached_io do
+      reply =
+        RobotsState.handle_attach_message(message)
+        |> Enum.into(<<>>, fn byte -> <<byte::8>> end)
+
+      IO.inspect("Pushing")
+
+      unless byte_size(reply) == 0 do
+        push(socket, "to_robot", {:binary, reply})
+      end
+    end
 
     {:noreply, socket}
   end

@@ -3,6 +3,7 @@ defmodule BrickScriptCollective.RobotsState do
   Module is responsible for reacting to robot state and updating
   Presence accordingly.
   """
+  alias BrickScriptCollective.Lwp.LwpMessageBuilder
   alias BrickScriptCollective.Presence
   use Agent
 
@@ -26,6 +27,24 @@ defmodule BrickScriptCollective.RobotsState do
       user,
       &Map.delete(&1, :robot)
     )
+  end
+
+  def handle_attach_message(%{
+        header: %{type: :hub_attached_io},
+        payload: %{event: :attached, port: port, io_type: io_type}
+      }) do
+    case io_type do
+      :force_sensor -> LwpMessageBuilder.port_input_format_setup(port, 1, 1)
+      :color_sensor -> LwpMessageBuilder.port_input_format_setup(port, 0, 1)
+      _ -> []
+    end
+  end
+
+  def handle_attach_message(%{
+        header: %{type: :hub_attached_io},
+        payload: %{event: :detached, port: port}
+      }) do
+    []
   end
 
   def attached_to_port(owner_pid, user, port, type) do
