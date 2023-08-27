@@ -1,27 +1,27 @@
 defmodule BrickScriptCollective.Lwp.LwpMessageBuilder do
   def port_input_format_setup(port, mode, delta) do
-    [
+    <<
       # length
-      0x10,
+      0x10::integer-size(8),
       # hub id
-      0x00,
+      0x00::integer-size(8),
       # message type
-      0x41,
+      0x41::integer-size(8),
       # port
       port,
       # mode to get info from (seems like 1 is touched)
-      mode,
+      mode::integer-size(8),
       # delta
-      delta,
+      delta::integer-size(8),
       # delta
-      0x00,
+      0x00::integer-size(8),
       # delta
-      0x00,
+      0x00::integer-size(8),
       # delta
-      0x00,
+      0x00::integer-size(8),
       # enable notifications
-      0x01
-    ]
+      0x01::integer-size(8)
+    >>
   end
 end
 

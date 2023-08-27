@@ -3,58 +3,32 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
   alias BrickScriptCollective.Lwp.LwpMessageParser
 
   describe "parsing LWP messages" do
-    test "it can parse one of the initial messages" do
-      message = %{
-        # length
-        "0" => 15,
-        # hub id
-        "1" => 0,
-        # type
-        "2" => 4,
-        # message type: HubAttacheIO
-        "3" => 98,
-        # event type attached
-        "4" => 1,
-        # Type id 1
-        "5" => 58,
-        # type id 2
-        "6" => 0,
-        # Hardware revistion
-        "7" => 1,
-        "8" => 0,
-        "9" => 0,
-        "10" => 0,
-        # software revision
-        "11" => 17,
-        "12" => 0,
-        "13" => 0,
-        "14" => 0
-      }
-
-      parsed = LwpMessageParser.parse(message)
-
-      assert parsed.header.length == 15
-      assert parsed.header.type == :hub_attached_io
-    end
-
     test "it detects attachment of color sensor" do
-      message = %{
-        "0" => 15,
-        "1" => 0,
-        "10" => 16,
-        "11" => 0,
-        "12" => 0,
-        "13" => 0,
-        "14" => 16,
-        "2" => 4,
-        "3" => 1,
-        "4" => 1,
-        "5" => 61,
-        "6" => 0,
-        "7" => 0,
-        "8" => 0,
-        "9" => 0
-      }
+      message = <<
+        # Message length
+        15,
+        # Hub Id (always set to 0)
+        0,
+        # Message type
+        4,
+        # Attached IO
+        1,
+        # Hardware revision start
+        1,
+        61,
+        0,
+        0,
+        0,
+        # Hardware revision end
+        0,
+        # Software revision start
+        16,
+        0,
+        0,
+        0,
+        # Software revision end
+        16
+      >>
 
       parsed = LwpMessageParser.parse(message)
 
@@ -64,23 +38,23 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
     end
 
     test "it detects attachment of small motor" do
-      message = %{
-        "0" => 15,
-        "1" => 0,
-        "10" => 0,
-        "11" => 0,
-        "12" => 0,
-        "13" => 3,
-        "14" => 16,
-        "2" => 4,
-        "3" => 0,
-        "4" => 1,
-        "5" => 65,
-        "6" => 0,
-        "7" => 1,
-        "8" => 0,
-        "9" => 0
-      }
+      message = <<
+        15,
+        0,
+        4,
+        0,
+        1,
+        65,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        16
+      >>
 
       parsed = LwpMessageParser.parse(message)
 
@@ -90,23 +64,23 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
     end
 
     test "it detects attachment of force sensor" do
-      message = %{
-        "0" => 15,
-        "1" => 0,
-        "10" => 16,
-        "11" => 0,
-        "12" => 0,
-        "13" => 0,
-        "14" => 16,
-        "2" => 4,
-        "3" => 0,
-        "4" => 1,
-        "5" => 63,
-        "6" => 0,
-        "7" => 0,
-        "8" => 0,
-        "9" => 0
-      }
+      message = <<
+        15,
+        0,
+        4,
+        0,
+        1,
+        63,
+        0,
+        0,
+        0,
+        0,
+        16,
+        0,
+        0,
+        0,
+        16
+      >>
 
       parsed = LwpMessageParser.parse(message)
 

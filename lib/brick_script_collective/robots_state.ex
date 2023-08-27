@@ -36,7 +36,7 @@ defmodule BrickScriptCollective.RobotsState do
     case io_type do
       :force_sensor -> LwpMessageBuilder.port_input_format_setup(port, 1, 1)
       :color_sensor -> LwpMessageBuilder.port_input_format_setup(port, 0, 1)
-      _ -> []
+      _ -> <<>>
     end
   end
 

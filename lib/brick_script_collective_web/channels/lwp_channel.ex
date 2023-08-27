@@ -17,13 +17,13 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
     message = LwpMessageParser.parse(payload)
 
     IO.inspect("Got message")
+    IO.inspect(message)
 
     if message.header.type == :hub_attached_io do
-      reply =
-        RobotsState.handle_attach_message(message)
-        |> Enum.into(<<>>, fn byte -> <<byte::8>> end)
+      reply = RobotsState.handle_attach_message(message)
 
       IO.inspect("Pushing")
+      IO.inspect(reply)
 
       unless byte_size(reply) == 0 do
         push(socket, "to_robot", {:binary, reply})

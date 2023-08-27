@@ -13,7 +13,7 @@ defmodule BrickScriptCollectiveWeb.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
-  socket "/socket", BrickScriptCollectiveWeb.WorkspaceSocket,
+  socket "/workspace_sync", BrickScriptCollectiveWeb.WorkspaceSocket,
     websocket: true,
     longpoll: false
 

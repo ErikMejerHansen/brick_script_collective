@@ -33,8 +33,7 @@ const connectToRobot = async (connectedCallback) => {
 
     console.log("characteristic", characteristic)
     characteristic.oncharacteristicvaluechanged = event => {
-        const array = new Uint8Array(event.target.value.buffer)
-        lwp_message_callback(array)
+        lwp_message_callback(event.target.value.buffer)
     }
 
     console.log("starting notifications")
