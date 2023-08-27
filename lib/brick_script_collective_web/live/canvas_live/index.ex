@@ -35,9 +35,6 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
 
   @impl true
   def handle_info(%Phoenix.Socket.Broadcast{event: "presence_diff", payload: diff}, socket) do
-    IO.inspect("---------------> presence diff")
-    IO.inspect(diff)
-
     socket =
       diff.leaves
       |> Enum.map(&presence_to_view_model/1)
