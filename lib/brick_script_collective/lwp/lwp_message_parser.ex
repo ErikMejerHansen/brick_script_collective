@@ -6,7 +6,9 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParser do
     %{header: parsed_header, payload: parsed_payload}
   end
 
-  defp parse_common_message_header(<<length::size(8), 0, message_type::size(8)>>) do
+  defp parse_common_message_header(
+         <<length::integer-size(8), 0::integer-size(8), message_type::integer-size(8)>>
+       ) do
     # assuming message length are kept below 128
     message_type =
       case message_type do
