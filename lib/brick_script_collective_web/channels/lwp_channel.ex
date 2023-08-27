@@ -12,18 +12,21 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
     end
   end
 
+  def handle_in("robot_connected", payload, socket) do
+    # Signals that a robot has been connected in the browser
+    # Create RobotStateHandler and save its PID in socket.assigns
+    IO.inspect("A new robot joined!")
+    IO.inspect(payload)
+
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_in("lwp_message", payload, socket) do
     message = LwpMessageParser.parse(payload)
 
-    IO.inspect("Got message")
-    IO.inspect(message)
-
     if message.header.type == :hub_attached_io do
       reply = RobotsState.handle_attach_message(message)
-
-      IO.inspect("Pushing")
-      IO.inspect(reply)
 
       unless byte_size(reply) == 0 do
         push(socket, "to_robot", {:binary, reply})

@@ -15,7 +15,7 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
         socket
         |> assign(:user_name, user_name)
 
-      Presence.track(self(), "users", socket.assigns[:user_name], %{robot: false})
+      Presence.track(self(), "users", socket.assigns[:user_name], %{})
       # Subscribe should only be called once!
       Phoenix.PubSub.subscribe(PubSub, "users")
 
@@ -35,6 +35,9 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
 
   @impl true
   def handle_info(%Phoenix.Socket.Broadcast{event: "presence_diff", payload: diff}, socket) do
+    IO.inspect("---------------> presence diff")
+    IO.inspect(diff)
+
     socket =
       diff.leaves
       |> Enum.map(&presence_to_view_model/1)
@@ -52,18 +55,10 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
     {:noreply, socket}
   end
 
-  defp presence_to_view_model({user_name, %{metas: [%{phx_ref: ref, robot: robot}]}}) do
+  defp presence_to_view_model({user_name, %{metas: [%{phx_ref: ref}]}}) do
     %{
       dom_id: ref,
-      name: user_name,
-      robot: robot
+      name: user_name
     }
-  end
-
-  @impl true
-  def handle_event("robot-connected", _robot_id, socket) do
-    RobotsState.robot_joined(self(), socket.assigns[:user_name])
-
-    {:noreply, socket}
   end
 end

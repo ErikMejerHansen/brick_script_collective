@@ -19,24 +19,21 @@ const connectToRobot = async (connectedCallback) => {
         }]
     });
 
-    console.log("Connecting", device)
-    const server = await device.gatt.connect();
-    connectedCallback(device.id)
 
-    console.log("Server", server)
+
+    const server = await device.gatt.connect();
+    lwpChannel.push("robot_connected", { robot_id: device.id })
+
     const service =
         await server.getPrimaryService(primaryServiceUuid);
 
-    console.log("Service", service)
     characteristic =
         await service.getCharacteristic(primaryCharacteristic);
 
-    console.log("characteristic", characteristic)
     characteristic.oncharacteristicvaluechanged = event => {
         lwp_message_callback(event.target.value.buffer)
     }
 
-    console.log("starting notifications")
     characteristic.startNotifications()
 
     lwpChannel.on("to_robot", (message) => {
@@ -49,12 +46,11 @@ const connectToRobot = async (connectedCallback) => {
 const bluetoothHook = {
     mounted() {
         const robotConnectedCallback = (id) => {
-            this.pushEvent("robot-connected", id)
+            // this.pushEvent("robot-connected", id)
         }
 
-
-        window.addEventListener("robot:connect", (event) => {
-            connectToRobot(robotConnectedCallback).then(() => { console.log("Connected?") })
+        window.addEventListener("robot:connect", (_event) => {
+            connectToRobot(robotConnectedCallback)
         })
     }
 }
