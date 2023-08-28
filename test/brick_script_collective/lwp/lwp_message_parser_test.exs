@@ -30,7 +30,7 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
         16
       >>
 
-      parsed = LwpMessageParser.parse({:binary, message})
+      parsed = LwpMessageParser.parse(message)
 
       assert parsed.header.length == 15
       assert parsed.header.type == :hub_attached_io
@@ -56,7 +56,7 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
         16
       >>
 
-      parsed = LwpMessageParser.parse({:binary, message})
+      parsed = LwpMessageParser.parse(message)
 
       assert parsed.header.length == 15
       assert parsed.header.type == :hub_attached_io
@@ -82,7 +82,7 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
         16
       >>
 
-      parsed = LwpMessageParser.parse({:binary, message})
+      parsed = LwpMessageParser.parse(message)
 
       assert parsed.header.length == 15
       assert parsed.header.type == :hub_attached_io

@@ -1,6 +1,5 @@
 defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
   alias Phoenix.Socket.Broadcast
-  alias Phoenix.Socket.Message
   use BrickScriptCollectiveWeb.ChannelCase
 
   describe "robot states broadcasts robot state changes" do
@@ -18,22 +17,36 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         payload: %{"my-robot" => %{}}
       })
     end
+
+    test "attaching a sensor causes a port setup message to be sent", %{
+      lwp_socket: lwp_socket,
+      state_socket: state_socket
+    } do
+      send_robot_connected(lwp_socket, "my-robot")
+      send_port_io_attached(lwp_socket)
+
+      assert_push("to_robot", {:binary, <<16, 0, 65, 0, 1, 1, 0, 0, 0, 1>>})
+    end
   end
 
-  defp send_robot_connected(socket, robot_id) do
-    push(socket, "robot_connected", %{robot_id: robot_id})
+  defp send_robot_connected(lwp_socket, robot_id) do
+    push(lwp_socket, "robot_connected", %{robot_id: robot_id})
   end
 
-  defp join_robots_state_channel(context) do
+  defp send_port_io_attached(socket) do
+    push(socket, "lwp_message", {:binary, <<15, 0, 4, 0, 1, 63, 0, 0, 0, 0, 16, 0, 0, 0, 16>>})
+  end
+
+  defp join_robots_state_channel(_context) do
     {:ok, _, socket} =
       BrickScriptCollectiveWeb.RobotsStateSocket
       |> socket("user_id", %{})
       |> subscribe_and_join(BrickScriptCollectiveWeb.RobotsStateChannel, "robots_state")
 
-    Map.put(context, :state_socket, socket)
+    %{state_socket: socket}
   end
 
-  defp join_lwp_messages_channel(context) do
+  defp join_lwp_messages_channel(_context) do
     {:ok, _, socket} =
       BrickScriptCollectiveWeb.UserSocket
       |> socket("user_id", %{})

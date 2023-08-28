@@ -24,27 +24,16 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
   def handle_in("robot_connected", payload, socket) do
     # Signals that a robot has been connected in the browser
     # Create RobotStateHandler and save its PID in socket.assigns
-
-    IO.inspect("A new robot joined!")
-    IO.inspect(payload)
-
-    pid = RobotHandler.start_link([socket])
+    {:ok, pid} = RobotHandler.start_link([socket])
     RobotHandler.robot_connected(pid, payload["robot_id"])
 
     {:noreply, socket |> assign(:handler, pid)}
   end
 
   @impl true
-  def handle_in("lwp_message", payload, socket) do
-    message = LwpMessageParser.parse(payload)
-
-    if message.header.type == :hub_attached_io do
-      reply = RobotsState.handle_attach_message(message)
-
-      unless byte_size(reply) == 0 do
-        push(socket, "to_robot", {:binary, reply})
-      end
-    end
+  def handle_in("lwp_message", {:binary, message}, socket) do
+    handler = socket.assigns.handler
+    RobotHandler.lwp_message_received(handler, message)
 
     {:noreply, socket}
   end
@@ -52,7 +41,8 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
   @doc """
   Allows sending lwp message to a specific robot.
   """
-  def push_command(message, socket) do
+  def push_command(socket, message) do
+    push(socket, "to_robot", {:binary, message})
   end
 
   # Add authorization logic here as required.

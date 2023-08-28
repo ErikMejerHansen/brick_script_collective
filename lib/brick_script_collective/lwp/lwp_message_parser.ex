@@ -1,5 +1,5 @@
 defmodule BrickScriptCollective.Lwp.LwpMessageParser do
-  def parse({:binary, <<header::bitstring-size(3 * 8), payload::bitstring>>}) do
+  def parse(<<header::bitstring-size(3 * 8), payload::bitstring>>) do
     parsed_header = parse_common_message_header(header)
     parsed_payload = parse(parsed_header.type, payload)
 
