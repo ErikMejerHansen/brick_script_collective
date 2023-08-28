@@ -1,4 +1,7 @@
 defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
+  alias BrickScriptCollective.Lwp.Robot
+  alias BrickScriptCollective.Lwp.Robot.Port
+  alias BrickScriptCollective.Lwp.Robot.Sensor
   alias Phoenix.Socket.Broadcast
   use BrickScriptCollectiveWeb.ChannelCase
 
@@ -26,6 +29,22 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       send_port_io_attached(lwp_socket)
 
       assert_push("to_robot", {:binary, <<16, 0, 65, 0, 1, 1, 0, 0, 0, 1>>})
+    end
+
+    test "attaching a sensor causes a state update broadcast", %{
+      lwp_socket: lwp_socket,
+      state_socket: state_socket
+    } do
+      send_robot_connected(lwp_socket, "my-robot")
+      send_port_io_attached(lwp_socket)
+
+      assert_broadcast("robots_state_update", %Broadcast{
+        topic: "robots_state",
+        event: "robots_state_update",
+        payload: %{
+          "my-robot" => %Robot{port_1: %Port{id: 0, attachment: %Sensor{type: :force_sensor}}}
+        }
+      })
     end
   end
 
@@ -55,3 +74,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
     %{lwp_socket: socket}
   end
 end
+
+# Example messages for button pushes
+# {:binary, <<5, 0, 69, 1, 0>>}
+# rs: {:binary, <<5, 0, 69, 1, 1>>}
