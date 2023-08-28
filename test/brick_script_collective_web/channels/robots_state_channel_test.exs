@@ -6,15 +6,6 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
   describe "robot states broadcasts robot state changes" do
     setup [:join_lwp_messages_channel, :join_robots_state_channel]
 
-    # setup do
-    #   {:ok, _, socket} =
-    #     BrickScriptCollectiveWeb.UserSocket
-    #     |> socket("user_id", %{some: :assign})
-    #     |> subscribe_and_join(BrickScriptCollectiveWeb.LWPChannel, "lwp")
-
-    #   %{socket: socket}
-    # end
-
     test "robots joining triggers state broadcast", %{
       lwp_socket: lwp_socket,
       state_socket: state_socket
