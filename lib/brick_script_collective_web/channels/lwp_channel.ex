@@ -1,4 +1,5 @@
 defmodule BrickScriptCollectiveWeb.LWPChannel do
+  alias BrickScriptCollectiveWeb.Endpoint
   alias BrickScriptCollective.RobotsState
   alias BrickScriptCollective.Lwp.LwpMessageParser
   use BrickScriptCollectiveWeb, :channel
@@ -15,6 +16,7 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
   def handle_in("robot_connected", payload, socket) do
     # Signals that a robot has been connected in the browser
     # Create RobotStateHandler and save its PID in socket.assigns
+
     IO.inspect("A new robot joined!")
     IO.inspect(payload)
 
