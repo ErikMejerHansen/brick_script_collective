@@ -1,7 +1,15 @@
 defmodule BrickScriptCollectiveWeb.LWPChannel do
+  @moduledoc """
+  Receives LWP messages from robots, parses them and sends them on to the Robot (Robot with capital R is server-side)
+
+  Receives robot commands from Robot and translates them into LWP messages and send them to
+  the robot.
+  """
   alias BrickScriptCollectiveWeb.Endpoint
   alias BrickScriptCollective.RobotsState
+  alias BrickScriptCollective.Lwp.RobotHandler
   alias BrickScriptCollective.Lwp.LwpMessageParser
+
   use BrickScriptCollectiveWeb, :channel
 
   @impl true
@@ -20,16 +28,10 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
     IO.inspect("A new robot joined!")
     IO.inspect(payload)
 
-    Endpoint.broadcast("robots_state", "robots_state_update", %Phoenix.Socket.Broadcast{
-      event: "robots_state_update",
-      payload: %{
-        :event => "robots_state_update",
-        "my-robot" => %{}
-      },
-      topic: "robots_state"
-    })
+    pid = RobotHandler.start_link([socket])
+    RobotHandler.robot_connected(pid, payload["robot_id"])
 
-    {:noreply, socket}
+    {:noreply, socket |> assign(:handler, pid)}
   end
 
   @impl true
@@ -45,6 +47,12 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
     end
 
     {:noreply, socket}
+  end
+
+  @doc """
+  Allows sending lwp message to a specific robot.
+  """
+  def push_command(message, socket) do
   end
 
   # Add authorization logic here as required.

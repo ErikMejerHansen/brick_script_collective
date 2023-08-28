@@ -17,9 +17,9 @@ defmodule BrickScriptCollective.Application do
       # Start Finch
       {Finch, name: BrickScriptCollective.Finch},
       # Start the Endpoint (http/https)
-      BrickScriptCollectiveWeb.Endpoint,
-      # Start robots state agent
-      BrickScriptCollective.RobotsState
+      BrickScriptCollectiveWeb.Endpoint
+      # # Start robots state agent
+      # BrickScriptCollective.RobotsState
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
