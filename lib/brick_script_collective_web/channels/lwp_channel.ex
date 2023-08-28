@@ -20,6 +20,15 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
     IO.inspect("A new robot joined!")
     IO.inspect(payload)
 
+    Endpoint.broadcast("robots_state", "robots_state_update", %Phoenix.Socket.Broadcast{
+      event: "robots_state_update",
+      payload: %{
+        :event => "robots_state_update",
+        "my-robot" => %{}
+      },
+      topic: "robots_state"
+    })
+
     {:noreply, socket}
   end
 
