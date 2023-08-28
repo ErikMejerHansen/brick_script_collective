@@ -1,5 +1,4 @@
 defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
-  alias BrickScriptCollective.RobotsState
   alias BrickScriptCollective.Presence
   alias BrickScriptCollective.PubSub
 

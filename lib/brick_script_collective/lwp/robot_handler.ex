@@ -14,12 +14,8 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     {:ok, {owning_socket, %Robot{}}}
   end
 
-  # Public API
   def robot_connected(pid, robot_id) do
     GenServer.cast(pid, {:connected, robot_id})
-  end
-
-  def robot_disconnected(pid, robot_id) do
   end
 
   def lwp_message_received(pid, message) do

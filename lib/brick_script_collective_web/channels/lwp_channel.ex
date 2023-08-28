@@ -5,20 +5,13 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
   Receives robot commands from Robot and translates them into LWP messages and send them to
   the robot.
   """
-  alias BrickScriptCollectiveWeb.Endpoint
-  alias BrickScriptCollective.RobotsState
   alias BrickScriptCollective.Lwp.RobotHandler
-  alias BrickScriptCollective.Lwp.LwpMessageParser
 
   use BrickScriptCollectiveWeb, :channel
 
   @impl true
-  def join("lwp", payload, socket) do
-    if authorized?(payload) do
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
-    end
+  def join("lwp", _payload, socket) do
+    {:ok, socket}
   end
 
   def handle_in("robot_connected", payload, socket) do
@@ -43,10 +36,5 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
   """
   def push_command(socket, message) do
     push(socket, "to_robot", {:binary, message})
-  end
-
-  # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
   end
 end
