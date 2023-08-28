@@ -76,7 +76,15 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
         _ -> <<>>
       end
 
-    updated_robot = %Robot{robot | port_1: %Port{id: port, attachment: %Sensor{type: io_type}}}
+    updated_robot =
+      case port do
+        0 -> %Robot{robot | port_0: %Port{id: port, attachment: %Sensor{type: io_type}}}
+        1 -> %Robot{robot | port_1: %Port{id: port, attachment: %Sensor{type: io_type}}}
+        2 -> %Robot{robot | port_2: %Port{id: port, attachment: %Sensor{type: io_type}}}
+        3 -> %Robot{robot | port_3: %Port{id: port, attachment: %Sensor{type: io_type}}}
+        4 -> %Robot{robot | port_4: %Port{id: port, attachment: %Sensor{type: io_type}}}
+        5 -> %Robot{robot | port_5: %Port{id: port, attachment: %Sensor{type: io_type}}}
+      end
 
     {:push, outbound_message, updated_robot}
   end

@@ -9,8 +9,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
     setup [:join_lwp_messages_channel, :join_robots_state_channel]
 
     test "robots joining triggers state broadcast", %{
-      lwp_socket: lwp_socket,
-      state_socket: state_socket
+      lwp_socket: lwp_socket
     } do
       send_robot_connected(lwp_socket, "my-robot")
 
@@ -22,8 +21,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
     end
 
     test "attaching a sensor causes a port setup message to be sent", %{
-      lwp_socket: lwp_socket,
-      state_socket: state_socket
+      lwp_socket: lwp_socket
     } do
       send_robot_connected(lwp_socket, "my-robot")
       send_port_io_attached(lwp_socket)
@@ -32,8 +30,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
     end
 
     test "attaching a sensor causes a state update broadcast", %{
-      lwp_socket: lwp_socket,
-      state_socket: state_socket
+      lwp_socket: lwp_socket
     } do
       send_robot_connected(lwp_socket, "my-robot")
       send_port_io_attached(lwp_socket)
@@ -42,7 +39,54 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         topic: "robots_state",
         event: "robots_state_update",
         payload: %{
-          "my-robot" => %Robot{port_1: %Port{id: 0, attachment: %Sensor{type: :force_sensor}}}
+          "my-robot" => %Robot{port_0: %Port{id: 0, attachment: %Sensor{type: :force_sensor}}}
+        }
+      })
+    end
+
+    test "port attaches broadcast with correct port", %{
+      lwp_socket: lwp_socket,
+      state_socket: _state_socket
+    } do
+      send_robot_connected(lwp_socket, "my-robot")
+
+      for port <- 1..5 do
+        send_port_io_attached(lwp_socket, port)
+      end
+
+      assert_broadcast("robots_state_update", %Broadcast{
+        payload: %{
+          "my-robot" => %Robot{port_0: %Port{id: 0}}
+        }
+      })
+
+      assert_broadcast("robots_state_update", %Broadcast{
+        payload: %{
+          "my-robot" => %Robot{port_1: %Port{id: 1}}
+        }
+      })
+
+      assert_broadcast("robots_state_update", %Broadcast{
+        payload: %{
+          "my-robot" => %Robot{port_2: %Port{id: 2}}
+        }
+      })
+
+      assert_broadcast("robots_state_update", %Broadcast{
+        payload: %{
+          "my-robot" => %Robot{port_3: %Port{id: 3}}
+        }
+      })
+
+      assert_broadcast("robots_state_update", %Broadcast{
+        payload: %{
+          "my-robot" => %Robot{port_4: %Port{id: 4}}
+        }
+      })
+
+      assert_broadcast("robots_state_update", %Broadcast{
+        payload: %{
+          "my-robot" => %Robot{port_5: %Port{id: 5}}
         }
       })
     end
@@ -52,8 +96,12 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
     push(lwp_socket, "robot_connected", %{robot_id: robot_id})
   end
 
-  defp send_port_io_attached(socket) do
-    push(socket, "lwp_message", {:binary, <<15, 0, 4, 0, 1, 63, 0, 0, 0, 0, 16, 0, 0, 0, 16>>})
+  defp send_port_io_attached(socket, port \\ 0) do
+    push(
+      socket,
+      "lwp_message",
+      {:binary, <<15, 0, 4, port, 1, 63, 0, 0, 0, 0, 16, 0, 0, 0, 16>>}
+    )
   end
 
   defp join_robots_state_channel(_context) do

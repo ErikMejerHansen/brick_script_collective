@@ -11,10 +11,11 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
         0,
         # Message type
         4,
-        # Attached IO
+        # port
+        5,
+        # Attach event
         1,
         # Hardware revision start
-        1,
         61,
         0,
         0,
@@ -35,6 +36,7 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
       assert parsed.header.length == 15
       assert parsed.header.type == :hub_attached_io
       assert parsed.payload.io_type == :color_sensor
+      assert parsed.payload.port == 5
     end
 
     test "it detects attachment of small motor" do
