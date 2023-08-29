@@ -59,7 +59,7 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
   end
 
   defp broadcast_robot_state_update(robot) do
-    Endpoint.broadcast("robots_state", "robots_state_update", %Phoenix.Socket.Broadcast{
+    Endpoint.broadcast("robots_state", "robots_state_update", %{
       event: "robots_state_update",
       payload: %{
         :event => "robots_state_update",
@@ -77,62 +77,6 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
          robot
        ) do
     updated_robot = update_port_value(robot, port, value)
-    # case port do
-    #   0 ->
-    #     updated_ports = List.update_at(robot.ports, port, )
-    #     %Robot{
-    #       robot
-    #       | port_0: %Port{
-    #           robot.port_0
-    #           | attachment: %Sensor{robot.port_0.attachment | value: value}
-    #         }
-    #     }
-
-    #   1 ->
-    #     %Robot{
-    #       robot
-    #       | port_1: %Port{
-    #           robot.port_1
-    #           | attachment: %Sensor{robot.port_1.attachment | value: value}
-    #         }
-    #     }
-
-    #   2 ->
-    #     %Robot{
-    #       robot
-    #       | port_2: %Port{
-    #           robot.port_2
-    #           | attachment: %Sensor{robot.port_2.attachment | value: value}
-    #         }
-    #     }
-
-    #   3 ->
-    #     %Robot{
-    #       robot
-    #       | port_3: %Port{
-    #           robot.port_3
-    #           | attachment: %Sensor{robot.port_3.attachment | value: value}
-    #         }
-    #     }
-
-    #   4 ->
-    #     %Robot{
-    #       robot
-    #       | port_4: %Port{
-    #           robot.port_4
-    #           | attachment: %Sensor{robot.port_4.attachment | value: value}
-    #         }
-    #     }
-
-    #   5 ->
-    #     %Robot{
-    #       robot
-    #       | port_5: %Port{
-    #           robot.port_5
-    #           | attachment: %Sensor{robot.port_5.attachment | value: value}
-    #         }
-    #     }
-    # end
 
     updated_robot
   end

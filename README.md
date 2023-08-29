@@ -50,16 +50,16 @@ https://coolors.co/abe188-f7ef99-f1bb87-f78e69-5d675b
   - [ ] Only start VM if leader
   - [ ] Leader changeover
 - [x] Robot connections
-- [ ] LWP Parser
+- [x] LWP Parser
 - [ ] LWP Message Builder
-- [ ] Handle PortAttachIO Flow
+- [x] Handle PortAttachIO Flow
 - [x] Logo
 - [x] Icons
 - [x] Deploy on fly.io
   - [x] Manual process
   - [ ] Automatic
-- [ ] Attach Robot/(Creature?)
-- [ ] Show users online (Phoenix Presence)
+- [x] Attach Robot/(Creature?)
+- [x] Show users online (Phoenix Presence)
   - [x] And if they have connected a robot
     - [ ] Show robot capabilities: Eye for color, ruler for distance sensor, gear for motor
       - [x] In presence meta data?

@@ -2,7 +2,6 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
   alias BrickScriptCollective.Lwp.Robot
   alias BrickScriptCollective.Lwp.Robot.Port
   alias BrickScriptCollective.Lwp.Robot.Sensor
-  alias Phoenix.Socket.Broadcast
   use BrickScriptCollectiveWeb.ChannelCase
 
   describe "robot states broadcasts robot state changes" do
@@ -13,7 +12,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
     } do
       send_robot_connected(lwp_socket, "my-robot")
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         topic: "robots_state",
         event: "robots_state_update",
         payload: %{"my-robot" => %{}}
@@ -35,7 +34,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       send_robot_connected(lwp_socket, "my-robot")
       send_port_io_attached(lwp_socket)
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         topic: "robots_state",
         event: "robots_state_update",
         payload: %{
@@ -63,7 +62,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         send_port_io_attached(lwp_socket, port)
       end
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -78,7 +77,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -93,7 +92,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -108,7 +107,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -123,7 +122,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -138,7 +137,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -161,7 +160,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       send_port_io_attached(lwp_socket)
       send_port_value_changed(lwp_socket)
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         topic: "robots_state",
         event: "robots_state_update",
         payload: %{
@@ -189,7 +188,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         send_port_value_changed(lwp_socket, port, port)
       end
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -204,7 +203,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -219,7 +218,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -234,7 +233,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -249,7 +248,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [
@@ -264,7 +263,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         }
       })
 
-      assert_broadcast("robots_state_update", %Broadcast{
+      assert_broadcast("robots_state_update", %{
         payload: %{
           "my-robot" => %Robot{
             ports: [

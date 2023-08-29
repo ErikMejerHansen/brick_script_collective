@@ -1,6 +1,7 @@
 import { lwpChannel, lwp_message_callback } from "../lwp_socket"
 import { workspace_update_callback, channel } from "../workspace_socket.js"
 import { connectToScratch } from "../scratch_connection"
+import { Queue } from "../queue"
 
 const scratchHook = {
     mounted() {
@@ -8,7 +9,8 @@ const scratchHook = {
     }
 }
 
-const connectToRobot = async (connectedCallback) => {
+const lwpToRobotQueue = new Queue()
+const connectToRobot = async () => {
 
     const primaryServiceUuid = "00001623-1212-efde-1623-785feabcd123"
     const primaryCharacteristic = "00001624-1212-efde-1623-785feabcd123"
@@ -19,9 +21,8 @@ const connectToRobot = async (connectedCallback) => {
         }]
     });
 
-
-
     const server = await device.gatt.connect();
+
     lwpChannel.push("robot_connected", { robot_id: device.id })
 
     const service =
@@ -37,27 +38,21 @@ const connectToRobot = async (connectedCallback) => {
     characteristic.startNotifications()
 
     lwpChannel.on("to_robot", (message) => {
-        // TODO: Has to wait for promise to resolve before writing the next one
-        characteristic.writeValueWithResponse(message)
+        lwpToRobotQueue.enqueue(() => characteristic.writeValueWithResponse(message))
     })
-
 }
 
-const bluetoothHook = {
+const bluetoothConnectHook = {
     mounted() {
-        const robotConnectedCallback = (id) => {
-            // this.pushEvent("robot-connected", id)
-        }
-
         window.addEventListener("robot:connect", (_event) => {
-            connectToRobot(robotConnectedCallback)
+            connectToRobot()
         })
     }
 }
 
 const Hooks = {
     ScratchHook: scratchHook,
-    BluetoothHook: bluetoothHook,
+    BluetoothHook: bluetoothConnectHook,
 }
 
 export default Hooks;

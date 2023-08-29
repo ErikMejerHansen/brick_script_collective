@@ -1,6 +1,7 @@
 defmodule BrickScriptCollective.Lwp.Robot do
   alias BrickScriptCollective.Lwp.Robot.Port
 
+  @derive Jason.Encoder
   defstruct id: "",
             ports: [
               %Port{id: 0},
