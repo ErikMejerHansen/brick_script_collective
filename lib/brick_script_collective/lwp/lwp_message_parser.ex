@@ -58,6 +58,13 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParser do
     %{event: :attached_virtual, port: port_id, io_type: parse_io_type(type)}
   end
 
+  defp parse(:port_value_single_mode, <<
+         port_id::integer-size(8),
+         value::integer-size(8)
+       >>) do
+    %{event: :value_change, port: port_id, value: value}
+  end
+
   defp parse(_, _) do
     %{event: :ignored}
   end

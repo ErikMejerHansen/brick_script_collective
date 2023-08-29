@@ -90,6 +90,20 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
       assert parsed.header.type == :hub_attached_io
       assert parsed.payload.io_type == :force_sensor
     end
+
+    test "can parse value value message" do
+      message_not_pressed = <<5, 0, 69, 1, 0>>
+      parsed_not_pressed = LwpMessageParser.parse(message_not_pressed)
+      assert parsed_not_pressed.header.type == :port_value_single_mode
+      assert parsed_not_pressed.payload.port == 1
+      assert parsed_not_pressed.payload.value == 0
+
+      message_pressed = <<5, 0, 69, 1, 1>>
+      parsed_pressed = LwpMessageParser.parse(message_pressed)
+      assert parsed_pressed.header.type == :port_value_single_mode
+      assert parsed_pressed.payload.port == 1
+      assert parsed_pressed.payload.value == 1
+    end
   end
 end
 

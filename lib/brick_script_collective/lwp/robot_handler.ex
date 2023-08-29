@@ -36,18 +36,25 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
   def handle_cast({:from_robot, raw_message}, state = {owning_socket, robot}) do
     message = LwpMessageParser.parse(raw_message)
 
-    if message.header.type == :hub_attached_io do
-      {:push, outbound_message, updated_robot} = do_lwp_message_received(message, robot)
+    case message.header.type do
+      :hub_attached_io ->
+        {:push, outbound_message, updated_robot} = do_lwp_message_received(message, robot)
 
-      broadcast_robot_state_update(updated_robot)
+        broadcast_robot_state_update(updated_robot)
 
-      unless byte_size(outbound_message) == 0 do
-        LWPChannel.push_command(owning_socket, outbound_message)
-      end
+        unless byte_size(outbound_message) == 0 do
+          LWPChannel.push_command(owning_socket, outbound_message)
+        end
 
-      {:noreply, {owning_socket, updated_robot}}
-    else
-      {:noreply, state}
+        {:noreply, {owning_socket, updated_robot}}
+
+      :port_value_single_mode ->
+        updated_robot = do_lwp_message_received(message, robot)
+        broadcast_robot_state_update(updated_robot)
+        {:noreply, {owning_socket, updated_robot}}
+
+      _ ->
+        {:noreply, state}
     end
   end
 
@@ -60,6 +67,73 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
       },
       topic: "robots_state"
     })
+  end
+
+  defp do_lwp_message_received(
+         %{
+           header: %{type: :port_value_single_mode},
+           payload: %{event: :value_change, port: port, value: value}
+         },
+         robot
+       ) do
+    updated_robot =
+      case port do
+        0 ->
+          %Robot{
+            robot
+            | port_0: %Port{
+                robot.port_0
+                | attachment: %Sensor{robot.port_0.attachment | value: value}
+              }
+          }
+
+        1 ->
+          %Robot{
+            robot
+            | port_1: %Port{
+                robot.port_1
+                | attachment: %Sensor{robot.port_1.attachment | value: value}
+              }
+          }
+
+        2 ->
+          %Robot{
+            robot
+            | port_2: %Port{
+                robot.port_2
+                | attachment: %Sensor{robot.port_2.attachment | value: value}
+              }
+          }
+
+        3 ->
+          %Robot{
+            robot
+            | port_3: %Port{
+                robot.port_3
+                | attachment: %Sensor{robot.port_3.attachment | value: value}
+              }
+          }
+
+        4 ->
+          %Robot{
+            robot
+            | port_4: %Port{
+                robot.port_4
+                | attachment: %Sensor{robot.port_4.attachment | value: value}
+              }
+          }
+
+        5 ->
+          %Robot{
+            robot
+            | port_5: %Port{
+                robot.port_5
+                | attachment: %Sensor{robot.port_5.attachment | value: value}
+              }
+          }
+      end
+
+    updated_robot
   end
 
   defp do_lwp_message_received(
