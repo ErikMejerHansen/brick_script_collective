@@ -39,7 +39,16 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         topic: "robots_state",
         event: "robots_state_update",
         payload: %{
-          "my-robot" => %Robot{port_0: %Port{id: 0, attachment: %Sensor{type: :force_sensor}}}
+          "my-robot" => %Robot{
+            ports: [
+              %Port{id: 0, attachment: %Sensor{type: :force_sensor}},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
+          }
         }
       })
     end
@@ -56,37 +65,91 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
 
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
-          "my-robot" => %Robot{port_0: %Port{id: 0}}
+          "my-robot" => %Robot{
+            ports: [
+              %Port{id: 0, attachment: %Sensor{}},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
+          }
         }
       })
 
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
-          "my-robot" => %Robot{port_1: %Port{id: 1}}
+          "my-robot" => %Robot{
+            ports: [
+              %Port{id: 0, attachment: %Sensor{}},
+              %Port{id: 1, attachment: %Sensor{}},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
+          }
         }
       })
 
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
-          "my-robot" => %Robot{port_2: %Port{id: 2}}
+          "my-robot" => %Robot{
+            ports: [
+              %Port{},
+              %Port{},
+              %Port{id: 2, attachment: %Sensor{}},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
+          }
         }
       })
 
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
-          "my-robot" => %Robot{port_3: %Port{id: 3}}
+          "my-robot" => %Robot{
+            ports: [
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{id: 3, attachment: %Sensor{}},
+              %Port{},
+              %Port{}
+            ]
+          }
         }
       })
 
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
-          "my-robot" => %Robot{port_4: %Port{id: 4}}
+          "my-robot" => %Robot{
+            ports: [
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{id: 4, attachment: %Sensor{}},
+              %Port{}
+            ]
+          }
         }
       })
 
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
-          "my-robot" => %Robot{port_5: %Port{id: 5}}
+          "my-robot" => %Robot{
+            ports: [
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{id: 5, attachment: %Sensor{}}
+            ]
+          }
         }
       })
     end
@@ -103,7 +166,14 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
         event: "robots_state_update",
         payload: %{
           "my-robot" => %Robot{
-            port_0: %Port{id: 0, attachment: %Sensor{type: :force_sensor, value: 1}}
+            ports: [
+              %Port{id: 0, attachment: %Sensor{type: :force_sensor, value: 1}},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
           }
         }
       })
@@ -116,13 +186,20 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
 
       for port <- 0..5 do
         send_port_io_attached(lwp_socket, port)
-        send_port_value_changed(lwp_socket, port)
+        send_port_value_changed(lwp_socket, port, port)
       end
 
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
           "my-robot" => %Robot{
-            port_0: %Port{id: 0, attachment: %Sensor{type: :force_sensor, value: 1}}
+            ports: [
+              %Port{id: 0, attachment: %Sensor{type: :force_sensor, value: 0}},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
           }
         }
       })
@@ -130,7 +207,14 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
           "my-robot" => %Robot{
-            port_1: %Port{id: 1, attachment: %Sensor{type: :force_sensor, value: 1}}
+            ports: [
+              %Port{},
+              %Port{id: 1, attachment: %Sensor{type: :force_sensor, value: 1}},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
           }
         }
       })
@@ -138,7 +222,14 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
           "my-robot" => %Robot{
-            port_2: %Port{id: 2, attachment: %Sensor{type: :force_sensor, value: 1}}
+            ports: [
+              %Port{},
+              %Port{},
+              %Port{id: 2, attachment: %Sensor{type: :force_sensor, value: 2}},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
           }
         }
       })
@@ -146,7 +237,14 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
           "my-robot" => %Robot{
-            port_3: %Port{id: 3, attachment: %Sensor{type: :force_sensor, value: 1}}
+            ports: [
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{id: 3, attachment: %Sensor{type: :force_sensor, value: 3}},
+              %Port{},
+              %Port{}
+            ]
           }
         }
       })
@@ -154,7 +252,14 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
           "my-robot" => %Robot{
-            port_4: %Port{id: 4, attachment: %Sensor{type: :force_sensor, value: 1}}
+            ports: [
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{id: 4, attachment: %Sensor{type: :force_sensor, value: 4}},
+              %Port{}
+            ]
           }
         }
       })
@@ -162,7 +267,14 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       assert_broadcast("robots_state_update", %Broadcast{
         payload: %{
           "my-robot" => %Robot{
-            port_5: %Port{id: 5, attachment: %Sensor{type: :force_sensor, value: 1}}
+            ports: [
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{id: 5, attachment: %Sensor{type: :force_sensor, value: 5}}
+            ]
           }
         }
       })
@@ -181,11 +293,11 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
     )
   end
 
-  defp send_port_value_changed(socket, port \\ 0) do
+  defp send_port_value_changed(socket, port \\ 0, value \\ 1) do
     push(
       socket,
       "lwp_message",
-      {:binary, <<5, 0, 69, port, 1>>}
+      {:binary, <<5, 0, 69, port, value>>}
     )
   end
 

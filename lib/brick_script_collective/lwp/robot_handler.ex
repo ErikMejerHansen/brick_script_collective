@@ -76,62 +76,63 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
          },
          robot
        ) do
-    updated_robot =
-      case port do
-        0 ->
-          %Robot{
-            robot
-            | port_0: %Port{
-                robot.port_0
-                | attachment: %Sensor{robot.port_0.attachment | value: value}
-              }
-          }
+    updated_robot = update_port_value(robot, port, value)
+    # case port do
+    #   0 ->
+    #     updated_ports = List.update_at(robot.ports, port, )
+    #     %Robot{
+    #       robot
+    #       | port_0: %Port{
+    #           robot.port_0
+    #           | attachment: %Sensor{robot.port_0.attachment | value: value}
+    #         }
+    #     }
 
-        1 ->
-          %Robot{
-            robot
-            | port_1: %Port{
-                robot.port_1
-                | attachment: %Sensor{robot.port_1.attachment | value: value}
-              }
-          }
+    #   1 ->
+    #     %Robot{
+    #       robot
+    #       | port_1: %Port{
+    #           robot.port_1
+    #           | attachment: %Sensor{robot.port_1.attachment | value: value}
+    #         }
+    #     }
 
-        2 ->
-          %Robot{
-            robot
-            | port_2: %Port{
-                robot.port_2
-                | attachment: %Sensor{robot.port_2.attachment | value: value}
-              }
-          }
+    #   2 ->
+    #     %Robot{
+    #       robot
+    #       | port_2: %Port{
+    #           robot.port_2
+    #           | attachment: %Sensor{robot.port_2.attachment | value: value}
+    #         }
+    #     }
 
-        3 ->
-          %Robot{
-            robot
-            | port_3: %Port{
-                robot.port_3
-                | attachment: %Sensor{robot.port_3.attachment | value: value}
-              }
-          }
+    #   3 ->
+    #     %Robot{
+    #       robot
+    #       | port_3: %Port{
+    #           robot.port_3
+    #           | attachment: %Sensor{robot.port_3.attachment | value: value}
+    #         }
+    #     }
 
-        4 ->
-          %Robot{
-            robot
-            | port_4: %Port{
-                robot.port_4
-                | attachment: %Sensor{robot.port_4.attachment | value: value}
-              }
-          }
+    #   4 ->
+    #     %Robot{
+    #       robot
+    #       | port_4: %Port{
+    #           robot.port_4
+    #           | attachment: %Sensor{robot.port_4.attachment | value: value}
+    #         }
+    #     }
 
-        5 ->
-          %Robot{
-            robot
-            | port_5: %Port{
-                robot.port_5
-                | attachment: %Sensor{robot.port_5.attachment | value: value}
-              }
-          }
-      end
+    #   5 ->
+    #     %Robot{
+    #       robot
+    #       | port_5: %Port{
+    #           robot.port_5
+    #           | attachment: %Sensor{robot.port_5.attachment | value: value}
+    #         }
+    #     }
+    # end
 
     updated_robot
   end
@@ -150,16 +151,35 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
         _ -> <<>>
       end
 
-    updated_robot =
-      case port do
-        0 -> %Robot{robot | port_0: %Port{id: port, attachment: %Sensor{type: io_type}}}
-        1 -> %Robot{robot | port_1: %Port{id: port, attachment: %Sensor{type: io_type}}}
-        2 -> %Robot{robot | port_2: %Port{id: port, attachment: %Sensor{type: io_type}}}
-        3 -> %Robot{robot | port_3: %Port{id: port, attachment: %Sensor{type: io_type}}}
-        4 -> %Robot{robot | port_4: %Port{id: port, attachment: %Sensor{type: io_type}}}
-        5 -> %Robot{robot | port_5: %Port{id: port, attachment: %Sensor{type: io_type}}}
-      end
+    updated_robot = attach_port(robot, port, io_type)
 
     {:push, outbound_message, updated_robot}
+  end
+
+  defp attach_port(robot, port, io_type) do
+    updated_ports =
+      robot.ports
+      |> List.update_at(port, fn port -> %Port{port | attachment: %Sensor{type: io_type}} end)
+
+    %Robot{robot | ports: updated_ports}
+  end
+
+  defp update_port_value(robot, port, value) do
+    updated_ports =
+      robot.ports
+      |> List.update_at(port, fn port ->
+        %Port{port | attachment: %Sensor{port.attachment | value: value}}
+      end)
+
+    %Robot{robot | ports: updated_ports}
+    # ports = robot.ports
+
+    #       %Robot{
+    #         robot
+    #         | port_5: %Port{
+    #             robot.port_5
+    #             | attachment: %Sensor{robot.port_5.attachment | value: value}
+    #           }
+    #       }
   end
 end

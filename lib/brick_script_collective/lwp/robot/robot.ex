@@ -2,10 +2,12 @@ defmodule BrickScriptCollective.Lwp.Robot do
   alias BrickScriptCollective.Lwp.Robot.Port
 
   defstruct id: "",
-            port_0: %Port{},
-            port_1: %Port{},
-            port_2: %Port{},
-            port_3: %Port{},
-            port_4: %Port{},
-            port_5: %Port{}
+            ports: [
+              %Port{id: 0},
+              %Port{id: 1},
+              %Port{id: 2},
+              %Port{id: 3},
+              %Port{id: 4},
+              %Port{id: 5}
+            ]
 end
