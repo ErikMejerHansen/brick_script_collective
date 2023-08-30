@@ -1,11 +1,12 @@
 import { lwpChannel, lwp_message_callback } from "../lwp_socket"
 import { workspace_update_callback, channel } from "../workspace_socket.js"
 import { connectToScratch } from "../scratch_connection"
+
 import { Queue } from "../queue"
 
 const scratchHook = {
     mounted() {
-        connectToScratch(workspace_update_callback, channel)
+        connectToScratch(workspace_update_callback, channel, this.handleEvent)
     }
 }
 

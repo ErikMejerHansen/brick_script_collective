@@ -55,10 +55,7 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
   end
 
   def handle_info(:selected_leader, socket) do
-    IO.inspect("👑")
-    IO.inspect(self())
-
-    {:noreply, socket}
+    {:noreply, push_event(socket, :selected_leader, %{})}
   end
 
   defp presence_to_view_model({user_name, %{metas: [%{phx_ref: ref}]}}) do
