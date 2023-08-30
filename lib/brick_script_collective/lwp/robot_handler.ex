@@ -1,4 +1,6 @@
 defmodule BrickScriptCollective.Lwp.RobotHandler do
+  alias BrickScriptCollective.Lwp.Robot.Motor
+  alias Phoenix.PubSub
   alias BrickScriptCollective.Lwp.LwpMessageParser
   alias BrickScriptCollective.Lwp.LwpMessageBuilder
   alias BrickScriptCollectiveWeb.LWPChannel
@@ -14,6 +16,8 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
   end
 
   def init([owning_socket]) do
+    PubSub.subscribe(BrickScriptCollective.PubSub, "vm_command")
+
     {:ok, {owning_socket, %Robot{}}}
   end
 
@@ -58,6 +62,27 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     end
   end
 
+  def handle_info({:vm_command, payload}, state = {owning_socket, robot}) do
+    # motor_ports =
+    #   robot.ports
+    #   |> Enum.filter(fn port -> match?(%{type: :small_motor}, port) end)
+    #   |> IO.inspect()
+
+    IO.inspect(payload)
+
+    {duration, _} = payload["duration"] |> Integer.parse()
+
+    message =
+      if payload["command"] == "turn_cw_for_time" do
+        LwpMessageBuilder.start_motor_for_time(0, duration, 60)
+      else
+        LwpMessageBuilder.start_motor_for_time(0, duration, -60)
+      end
+
+    LWPChannel.push_command(owning_socket, message)
+    {:noreply, state}
+  end
+
   defp broadcast_robot_state_update(robot) do
     Endpoint.broadcast("robots_state", "robots_state_update", %{
       event: "robots_state_update",
@@ -100,6 +125,16 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     {:push, outbound_message, updated_robot}
   end
 
+  defp attach_port(robot, port, :small_motor) do
+    updated_ports =
+      robot.ports
+      |> List.update_at(port, fn port ->
+        %Port{port | attachment: %Motor{type: :small_motor, running: false}}
+      end)
+
+    %Robot{robot | ports: updated_ports}
+  end
+
   defp attach_port(robot, port, io_type) do
     updated_ports =
       robot.ports
@@ -116,14 +151,5 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
       end)
 
     %Robot{robot | ports: updated_ports}
-    # ports = robot.ports
-
-    #       %Robot{
-    #         robot
-    #         | port_5: %Port{
-    #             robot.port_5
-    #             | attachment: %Sensor{robot.port_5.attachment | value: value}
-    #           }
-    #       }
   end
 end

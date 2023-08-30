@@ -20,7 +20,6 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
       Phoenix.PubSub.subscribe(PubSub, "users")
 
       connected_users = Presence.list("users") |> Enum.map(&presence_to_view_model/1)
-      IO.inspect("------------- inform vm leader selection of join")
       VmLeaderSelector.join(self())
 
       {:ok,

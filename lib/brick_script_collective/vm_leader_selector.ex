@@ -18,7 +18,6 @@ defmodule BrickScriptCollective.VmLeaderSelector do
   end
 
   def handle_cast({:join, pid}, %{leader: nil, participants: participants}) do
-    IO.inspect("Got join!")
     participants = MapSet.put(participants, pid)
     leader = do_leader_select(participants)
 
@@ -44,13 +43,11 @@ defmodule BrickScriptCollective.VmLeaderSelector do
   defp do_leader_select(participants) do
     unless MapSet.size(participants) == 0 do
       leader = Enum.random(participants)
-
-      IO.inspect("Sending leader selection message =======================")
       send(leader, :selected_leader)
 
       leader
     else
-      IO.inspect("Empty participants list")
+      :logger.info("#{__MODULE__}: Lost last participant, no leader selected")
       nil
     end
   end

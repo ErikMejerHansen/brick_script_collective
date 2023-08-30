@@ -1,12 +1,13 @@
 import { lwpChannel, lwp_message_callback } from "../lwp_socket"
 import { workspace_update_callback, channel } from "../workspace_socket.js"
+import { sendVmCommand } from "../vm_commands_socket"
 import { connectToScratch } from "../scratch_connection"
 
 import { Queue } from "../queue"
 
 const scratchHook = {
     mounted() {
-        connectToScratch(workspace_update_callback, channel, this.handleEvent)
+        connectToScratch(workspace_update_callback, channel, sendVmCommand)
     }
 }
 
@@ -37,8 +38,10 @@ const connectToRobot = async () => {
     }
 
     characteristic.startNotifications()
+    console.log(characteristic)
 
     lwpChannel.on("to_robot", (message) => {
+        console.log(message)
         lwpToRobotQueue.enqueue(() => characteristic.writeValueWithResponse(message))
     })
 }
