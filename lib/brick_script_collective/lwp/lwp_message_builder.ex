@@ -23,6 +23,29 @@ defmodule BrickScriptCollective.Lwp.LwpMessageBuilder do
       0x01::integer-size(8)
     >>
   end
+
+  def start_motor_for_time(port, time, speed) do
+    # [0x09, 0x00, 0x81, 0x00, 0b00010001, 0x09, 0x64, 0x02, 0x50, 0x64, 0x00, 0x00]
+    <<
+      # Length
+      0x09::integer-size(8),
+      # HubId
+      0x00::integer-size(8),
+      # Command: port output command
+      0x81::integer-size(8),
+      port,
+      # Execute immediately, Command feedback
+      0b00010001::integer-size(8),
+      time::integer-size(2 * 8),
+      speed,
+      # Max power
+      0x64::integer-size(8),
+      # End state (float)
+      0x00::integer-size(8),
+      # Don't use any acceleration or deceleration profile
+      0x00::integer-size(8)
+    >>
+  end
 end
 
 # Message header

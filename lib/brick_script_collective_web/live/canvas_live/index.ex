@@ -1,4 +1,5 @@
 defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
+  alias BrickScriptCollective.VmLeaderSelector
   alias BrickScriptCollective.Presence
   alias BrickScriptCollective.PubSub
 
@@ -19,6 +20,8 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
       Phoenix.PubSub.subscribe(PubSub, "users")
 
       connected_users = Presence.list("users") |> Enum.map(&presence_to_view_model/1)
+      IO.inspect("------------- inform vm leader selection of join")
+      VmLeaderSelector.join(self())
 
       {:ok,
        socket
@@ -51,10 +54,22 @@ defmodule BrickScriptCollectiveWeb.CanvasLive.Index do
     {:noreply, socket}
   end
 
+  def handle_info(:selected_leader, socket) do
+    IO.inspect("👑")
+    IO.inspect(self())
+
+    {:noreply, socket}
+  end
+
   defp presence_to_view_model({user_name, %{metas: [%{phx_ref: ref}]}}) do
     %{
       dom_id: ref,
       name: user_name
     }
+  end
+
+  @impl true
+  def terminate(_, _socket) do
+    VmLeaderSelector.leave(self())
   end
 end
