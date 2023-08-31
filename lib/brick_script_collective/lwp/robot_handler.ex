@@ -63,23 +63,26 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
   end
 
   def handle_info({:vm_command, payload}, state = {owning_socket, robot}) do
-    # motor_ports =
-    #   robot.ports
-    #   |> Enum.filter(fn port -> match?(%{type: :small_motor}, port) end)
-    #   |> IO.inspect()
-
-    IO.inspect(payload)
+    motor_ports =
+      robot.ports
+      |> Enum.filter(fn port -> match?(%{attachment: %{type: :small_motor}}, port) end)
+      |> IO.inspect()
 
     {duration, _} = payload["duration"] |> Integer.parse()
 
-    message =
+    messages =
       if payload["command"] == "turn_cw_for_time" do
-        LwpMessageBuilder.start_motor_for_time(0, duration, 60)
+        motor_ports
+        |> Enum.map(&LwpMessageBuilder.start_motor_for_time(&1.id, duration, 60))
       else
-        LwpMessageBuilder.start_motor_for_time(0, duration, -60)
+        motor_ports
+        |> Enum.map(&LwpMessageBuilder.start_motor_for_time(&1.id, duration, -60))
       end
 
-    LWPChannel.push_command(owning_socket, message)
+    for message <- messages do
+      LWPChannel.push_command(owning_socket, message)
+    end
+
     {:noreply, state}
   end
 
