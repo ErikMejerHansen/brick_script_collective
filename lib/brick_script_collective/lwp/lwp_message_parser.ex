@@ -30,7 +30,7 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParser do
     %{length: length, type: message_type}
   end
 
-  defp parse(:hub_attached_io, <<port_id::integer-size(8), 0x00::integer-size(8), _rest>>) do
+  defp parse(:hub_attached_io, <<0x00::integer-size(8), port_id::integer-size(8)>>) do
     %{event: :detached, port: port_id}
   end
 

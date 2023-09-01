@@ -30,7 +30,19 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     GenServer.cast(pid, {:from_robot, message})
   end
 
-  def handle_cast({event, message}, state) do
+  def handle_info(message, state) do
+    updated_state = handle_event(message, state)
+
+    {:noreply, updated_state}
+  end
+
+  def handle_cast(message, state) do
+    updated_state = handle_event(message, state)
+
+    {:noreply, updated_state}
+  end
+
+  def handle_event({event, message}, state) do
     actions =
       case event do
         :connected -> [{:state_update, %Robot{id: message}}]
@@ -39,9 +51,9 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
         :vm_command -> handle_vm_command(message, state)
       end
 
-    state = process_actions(actions, state)
+    updated_state = process_actions(actions, state)
 
-    {:noreply, state}
+    updated_state
   end
 
   defp process_actions(actions, state) when is_list(actions),
@@ -101,11 +113,10 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     [{:send, sensor_setup_message}, {:state_update, updated_robot}]
   end
 
-  def handle_vm_command({:vm_command, payload}, state) do
+  def handle_vm_command(payload, state) do
     motor_ports =
       state.robot.ports
       |> Enum.filter(fn port -> match?(%{attachment: %{type: :small_motor}}, port) end)
-      |> IO.inspect()
 
     {duration, _} = payload["duration"] |> Integer.parse()
 

@@ -286,7 +286,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
               %Port{},
               %Port{},
               %Port{},
-              %Port{id: 5, attachment: %sensor{type: :force_sensor, value: 5}}
+              %Port{id: 5, attachment: %Sensor{type: :force_sensor, value: 5}}
             ]
           }
         }

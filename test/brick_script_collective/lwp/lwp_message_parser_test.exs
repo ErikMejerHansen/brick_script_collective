@@ -120,6 +120,15 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
       assert parsed_command_in_progress.payload.port == 0
       assert parsed_command_in_progress.payload.message == :done
     end
+
+    test "can parse port IO detached message" do
+      raw_message = <<5, 0, 4, 0, 0>>
+      parsed = LwpMessageParser.parse(raw_message)
+
+      assert parsed.header.type == :hub_attached_io
+      assert parsed.payload.port == 0
+      assert parsed.payload.event == :detached
+    end
   end
 end
 
