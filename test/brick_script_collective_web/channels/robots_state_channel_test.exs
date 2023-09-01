@@ -2,6 +2,7 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
   alias BrickScriptCollective.Lwp.Robot
   alias BrickScriptCollective.Lwp.Robot.Port
   alias BrickScriptCollective.Lwp.Robot.Sensor
+  alias BrickScriptCollective.Lwp.Robot.Motor
   use BrickScriptCollectiveWeb.ChannelCase
 
   describe "robot states broadcasts robot state changes" do
@@ -272,7 +273,53 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
               %Port{},
               %Port{},
               %Port{},
-              %Port{id: 5, attachment: %Sensor{type: :force_sensor, value: 5}}
+              %Port{id: 5, attachment: %sensor{type: :force_sensor, value: 5}}
+            ]
+          }
+        }
+      })
+    end
+
+    test "motor started messages causes state change", %{
+      lwp_socket: lwp_socket
+    } do
+      send_robot_connected(lwp_socket, "my-robot")
+      send_port_io_attached(lwp_socket, 0, 0x41)
+      send_motor_started_message(lwp_socket)
+
+      assert_broadcast("robots_state_update", %{
+        payload: %{
+          "my-robot" => %Robot{
+            ports: [
+              %Port{attachment: %Motor{running: true}},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{}
+            ]
+          }
+        }
+      })
+    end
+
+    test "motor stopped message causes state change", %{
+      lwp_socket: lwp_socket
+    } do
+      send_robot_connected(lwp_socket, "my-robot")
+      send_port_io_attached(lwp_socket, 0, 0x41)
+      send_motor_stopped_message(lwp_socket)
+
+      assert_broadcast("robots_state_update", %{
+        payload: %{
+          "my-robot" => %Robot{
+            ports: [
+              %Port{attachment: %Motor{running: false}},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{},
+              %Port{}
             ]
           }
         }
@@ -284,11 +331,27 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
     push(lwp_socket, "robot_connected", %{robot_id: robot_id})
   end
 
-  defp send_port_io_attached(socket, port \\ 0) do
+  defp send_port_io_attached(socket, port \\ 0, type \\ 63) do
     push(
       socket,
       "lwp_message",
-      {:binary, <<15, 0, 4, port, 1, 63, 0, 0, 0, 0, 16, 0, 0, 0, 16>>}
+      {:binary, <<15, 0, 4, port, 1, type, 0, 0, 0, 0, 16, 0, 0, 0, 16>>}
+    )
+  end
+
+  defp send_motor_started_message(socket, port \\ 0) do
+    push(
+      socket,
+      "lwp_message",
+      {:binary, <<5, 0, 130, port, 1>>}
+    )
+  end
+
+  defp send_motor_stopped_message(socket, port \\ 0) do
+    push(
+      socket,
+      "lwp_message",
+      {:binary, <<5, 0, 130, port, 10>>}
     )
   end
 

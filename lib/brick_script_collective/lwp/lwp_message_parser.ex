@@ -65,6 +65,23 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParser do
     %{event: :value_change, port: port_id, value: value}
   end
 
+  defp parse(:port_output_command_feedback, <<
+         port_id::integer-size(8),
+         message::integer-size(8)
+       >>) do
+    message =
+      case message do
+        0x01 -> :in_progress
+        0x02 -> :completed
+        0x04 -> :discarded
+        0x08 -> :idle
+        0x10 -> :done
+        0x0A -> :done
+      end
+
+    %{event: :port_output_command_feedback, port: port_id, message: message}
+  end
+
   defp parse(_, _) do
     %{event: :ignored}
   end

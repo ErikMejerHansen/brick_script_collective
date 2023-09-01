@@ -104,6 +104,22 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParserTest do
       assert parsed_pressed.payload.port == 1
       assert parsed_pressed.payload.value == 1
     end
+
+    test "can parse port output command feedback messages" do
+      raw_command_in_progress = <<5, 0, 130, 0, 1>>
+      parsed_command_in_progress = LwpMessageParser.parse(raw_command_in_progress)
+
+      assert parsed_command_in_progress.header.type == :port_output_command_feedback
+      assert parsed_command_in_progress.payload.port == 0
+      assert parsed_command_in_progress.payload.message == :in_progress
+
+      raw_command_in_progress = <<5, 0, 130, 0, 10>>
+      parsed_command_in_progress = LwpMessageParser.parse(raw_command_in_progress)
+
+      assert parsed_command_in_progress.header.type == :port_output_command_feedback
+      assert parsed_command_in_progress.payload.port == 0
+      assert parsed_command_in_progress.payload.message == :done
+    end
   end
 end
 

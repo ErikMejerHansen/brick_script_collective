@@ -1,13 +1,10 @@
 defmodule BrickScriptCollective.Lwp.RobotHandler do
-  alias BrickScriptCollective.Lwp.Robot.Motor
   alias Phoenix.PubSub
   alias BrickScriptCollective.Lwp.LwpMessageParser
   alias BrickScriptCollective.Lwp.LwpMessageBuilder
   alias BrickScriptCollectiveWeb.LWPChannel
   alias BrickScriptCollectiveWeb.Endpoint
   alias BrickScriptCollective.Lwp.Robot
-  alias BrickScriptCollective.Lwp.Robot.Port
-  alias BrickScriptCollective.Lwp.Robot.Sensor
 
   use GenServer
 
@@ -18,7 +15,7 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
   def init([owning_socket]) do
     PubSub.subscribe(BrickScriptCollective.PubSub, "vm_command")
 
-    {:ok, {owning_socket, %Robot{}}}
+    {:ok, %{owning_socket: owning_socket, robot: %Robot{}}}
   end
 
   def robot_connected(pid, robot_id) do
@@ -29,42 +26,80 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     GenServer.cast(pid, {:from_robot, message})
   end
 
-  def handle_cast({:connected, robot_id}, {owning_socket, robot}) do
-    updated_robot = %Robot{robot | id: robot_id}
+  def handle_cast({event, message}, state) do
+    actions =
+      case event do
+        :connected -> [{:state_update, %Robot{id: message}}]
+        :disconnected -> [{:state_update, :disconnect}]
+        :from_robot -> from_robot(message, state)
+        :vm_command -> handle_vm_command(message, state)
+      end
 
-    broadcast_robot_state_update(updated_robot)
+    state = process_actions(actions, state)
 
-    {:noreply, {owning_socket, updated_robot}}
+    {:noreply, state}
   end
 
-  def handle_cast({:from_robot, raw_message}, state = {owning_socket, robot}) do
+  defp process_actions(actions, state) when is_list(actions),
+    do: actions |> Enum.reduce(state, &process_action(&1, &2))
+
+  defp process_action({:send, message}, state) do
+    LWPChannel.push_command(state.owning_socket, message)
+
+    state
+  end
+
+  defp process_action({:state_update, updated_robot}, state) do
+    broadcast_robot_state_update(updated_robot)
+    %{state | robot: updated_robot}
+  end
+
+  defp from_robot(raw_message, state) do
     message = LwpMessageParser.parse(raw_message)
 
     case message.header.type do
       :hub_attached_io ->
-        {:push, outbound_message, updated_robot} = do_lwp_message_received(message, robot)
-
-        broadcast_robot_state_update(updated_robot)
-
-        unless byte_size(outbound_message) == 0 do
-          LWPChannel.push_command(owning_socket, outbound_message)
-        end
-
-        {:noreply, {owning_socket, updated_robot}}
+        handle_hub_attached_io(message, state.robot)
 
       :port_value_single_mode ->
-        updated_robot = do_lwp_message_received(message, robot)
-        broadcast_robot_state_update(updated_robot)
-        {:noreply, {owning_socket, updated_robot}}
+        handle_port_value_single_mode(message, state.robot)
+
+      :port_output_command_feedback ->
+        handle_output_command_feedback(message, state.robot)
 
       _ ->
-        {:noreply, state}
+        :logger.warning("#{__MODULE__} unhandled message from robot: #{inspect(raw_message)}")
+        []
     end
   end
 
-  def handle_info({:vm_command, payload}, state = {owning_socket, robot}) do
+  defp handle_port_value_single_mode(message, robot) do
+    %{header: _, payload: payload} = message
+
+    [
+      {:state_update, Robot.update_port_value(robot, payload.port, payload.value)}
+    ]
+  end
+
+  defp handle_hub_attached_io(message, robot) do
+    %{header: _header, payload: %{event: :attached, port: port, io_type: io_type}} = message
+
+    sensor_setup_message =
+      case io_type do
+        :force_sensor -> LwpMessageBuilder.port_input_format_setup(port, 1, 1)
+        :color_sensor -> LwpMessageBuilder.port_input_format_setup(port, 0, 1)
+        # Motors do not require a port format message
+        _ -> <<>>
+      end
+
+    updated_robot = Robot.attach_port(robot, port, io_type)
+
+    [{:send, sensor_setup_message}, {:state_update, updated_robot}]
+  end
+
+  def handle_vm_command({:vm_command, payload}, state) do
     motor_ports =
-      robot.ports
+      state.robot.ports
       |> Enum.filter(fn port -> match?(%{attachment: %{type: :small_motor}}, port) end)
       |> IO.inspect()
 
@@ -73,17 +108,29 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     messages =
       if payload["command"] == "turn_cw_for_time" do
         motor_ports
-        |> Enum.map(&LwpMessageBuilder.start_motor_for_time(&1.id, duration, 60))
+        |> Enum.map(fn port ->
+          {:send, LwpMessageBuilder.start_motor_for_time(port.id, duration, 60)}
+        end)
       else
         motor_ports
-        |> Enum.map(&LwpMessageBuilder.start_motor_for_time(&1.id, duration, -60))
+        |> Enum.map(fn port ->
+          {:send, LwpMessageBuilder.start_motor_for_time(port.id, duration, -60)}
+        end)
       end
 
-    for message <- messages do
-      LWPChannel.push_command(owning_socket, message)
-    end
+    messages
+  end
 
-    {:noreply, state}
+  defp handle_output_command_feedback(message, robot) do
+    %{header: _, payload: payload} = message
+
+    updated_robot =
+      case payload.message do
+        :in_progress -> Robot.update_motor_value(robot, payload.port, :running)
+        :done -> Robot.update_motor_value(robot, payload.port, :stopped)
+      end
+
+    [{:state_update, updated_robot}]
   end
 
   defp broadcast_robot_state_update(robot) do
@@ -95,64 +142,5 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
       },
       topic: "robots_state"
     })
-  end
-
-  defp do_lwp_message_received(
-         %{
-           header: %{type: :port_value_single_mode},
-           payload: %{event: :value_change, port: port, value: value}
-         },
-         robot
-       ) do
-    updated_robot = update_port_value(robot, port, value)
-
-    updated_robot
-  end
-
-  defp do_lwp_message_received(
-         %{
-           header: %{type: :hub_attached_io},
-           payload: %{event: :attached, port: port, io_type: io_type}
-         },
-         robot
-       ) do
-    outbound_message =
-      case io_type do
-        :force_sensor -> LwpMessageBuilder.port_input_format_setup(port, 1, 1)
-        :color_sensor -> LwpMessageBuilder.port_input_format_setup(port, 0, 1)
-        _ -> <<>>
-      end
-
-    updated_robot = attach_port(robot, port, io_type)
-
-    {:push, outbound_message, updated_robot}
-  end
-
-  defp attach_port(robot, port, :small_motor) do
-    updated_ports =
-      robot.ports
-      |> List.update_at(port, fn port ->
-        %Port{port | attachment: %Motor{type: :small_motor, running: false}}
-      end)
-
-    %Robot{robot | ports: updated_ports}
-  end
-
-  defp attach_port(robot, port, io_type) do
-    updated_ports =
-      robot.ports
-      |> List.update_at(port, fn port -> %Port{port | attachment: %Sensor{type: io_type}} end)
-
-    %Robot{robot | ports: updated_ports}
-  end
-
-  defp update_port_value(robot, port, value) do
-    updated_ports =
-      robot.ports
-      |> List.update_at(port, fn port ->
-        %Port{port | attachment: %Sensor{port.attachment | value: value}}
-      end)
-
-    %Robot{robot | ports: updated_ports}
   end
 end
