@@ -20,6 +20,19 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
       })
     end
 
+    test "robots leaving triggers state broadcast", %{
+      lwp_socket: lwp_socket
+    } do
+      send_robot_connected(lwp_socket, "my-robot")
+      send_robot_disconnected(lwp_socket, "my-robot")
+
+      assert_broadcast("robots_state_update", %{
+        topic: "robots_state",
+        event: "robots_state_update",
+        payload: %{}
+      })
+    end
+
     test "attaching a sensor causes a port setup message to be sent", %{
       lwp_socket: lwp_socket
     } do
@@ -329,6 +342,10 @@ defmodule BrickScriptCollectiveWeb.RobotsStateChannelTest do
 
   defp send_robot_connected(lwp_socket, robot_id) do
     push(lwp_socket, "robot_connected", %{robot_id: robot_id})
+  end
+
+  defp send_robot_disconnected(lwp_socket, robot_id) do
+    push(lwp_socket, "robot_disconnected", %{robot_id: robot_id})
   end
 
   defp send_port_io_attached(socket, port \\ 0, type \\ 63) do

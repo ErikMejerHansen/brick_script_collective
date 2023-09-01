@@ -23,6 +23,15 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
     {:noreply, socket |> assign(:handler, pid)}
   end
 
+  def handle_in("robot_disconnected", payload, socket) do
+    # Signals that a robot has been connected in the browser
+    # Create RobotStateHandler and save its PID in socket.assigns
+    handler = socket.assigns.handler
+    RobotHandler.robot_disconnected(handler, payload["robot_id"])
+
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_in("lwp_message", {:binary, message}, socket) do
     handler = socket.assigns.handler

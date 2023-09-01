@@ -22,6 +22,10 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     GenServer.cast(pid, {:connected, robot_id})
   end
 
+  def robot_disconnected(pid, robot_id) do
+    GenServer.cast(pid, {:disconnected, robot_id})
+  end
+
   def lwp_message_received(pid, message) do
     GenServer.cast(pid, {:from_robot, message})
   end
@@ -30,7 +34,7 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     actions =
       case event do
         :connected -> [{:state_update, %Robot{id: message}}]
-        :disconnected -> [{:state_update, :disconnect}]
+        :disconnected -> [{:state_update, nil}]
         :from_robot -> from_robot(message, state)
         :vm_command -> handle_vm_command(message, state)
       end
