@@ -60,7 +60,9 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     do: actions |> Enum.reduce(state, &process_action(&1, &2))
 
   defp process_action({:send, message}, state) do
-    LWPChannel.push_command(state.owning_socket, message)
+    unless bit_size(message) == 0 do
+      LWPChannel.push_command(state.owning_socket, message)
+    end
 
     state
   end
@@ -97,9 +99,10 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     ]
   end
 
-  defp handle_hub_attached_io(message, robot) do
-    %{header: _header, payload: %{event: :attached, port: port, io_type: io_type}} = message
-
+  defp handle_hub_attached_io(
+         %{header: _header, payload: %{event: :attached, port: port, io_type: io_type}},
+         robot
+       ) do
     sensor_setup_message =
       case io_type do
         :force_sensor -> LwpMessageBuilder.port_input_format_setup(port, 1, 1)
@@ -113,7 +116,18 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
     [{:send, sensor_setup_message}, {:state_update, updated_robot}]
   end
 
+  defp handle_hub_attached_io(
+         %{header: _header, payload: %{event: :detached, port: port}},
+         robot
+       ) do
+    updated_robot = Robot.detach_port(robot, port)
+
+    [{:state_update, updated_robot}]
+  end
+
   def handle_vm_command(payload, state) do
+    IO.inspect("VM command")
+
     motor_ports =
       state.robot.ports
       |> Enum.filter(fn port -> match?(%{attachment: %{type: :small_motor}}, port) end)

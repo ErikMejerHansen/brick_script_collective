@@ -32,6 +32,14 @@ defmodule BrickScriptCollective.Lwp.Robot do
     %__MODULE__{robot | ports: updated_ports}
   end
 
+  def detach_port(robot, port) do
+    updated_ports =
+      robot.ports
+      |> List.update_at(port, fn port -> %Port{port | attachment: :none} end)
+
+    %__MODULE__{robot | ports: updated_ports}
+  end
+
   def update_motor_value(robot, port, :running) do
     updated_ports =
       robot.ports

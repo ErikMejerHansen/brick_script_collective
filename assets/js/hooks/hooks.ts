@@ -41,7 +41,6 @@ const connectToRobot = async () => {
     console.log(characteristic)
 
     lwpChannel.on("to_robot", (message) => {
-        console.log(message)
         lwpToRobotQueue.enqueue(() => characteristic.writeValueWithResponse(message))
     })
 }

@@ -25,8 +25,27 @@ window.liveSocket = liveSocket
 
 
 window.robots = new Map()
+const getAttachedMotors = () => {
+    const connectedPorts = Array.from(window.robots.values()).flatMap(it => it.ports)
+    console.log(connectedPorts)
+    const attachedMotors = connectedPorts.map(it => it.attachment).filter(it => it.type === 'small_motor')
+
+    return attachedMotors
+}
+
 robotsStateChannel.on("robots_state_update", (message) => {
     const robotId = Object.keys(message.payload).filter(it => it !== 'event')[0]
     const robot = message.payload[robotId]
     window.robots.set(robotId, robot)
+
+    running_motors = getAttachedMotors().filter(motor => motor.running)
+    console.log("Running motors", running_motors)
+    console.log("Motor promise resolver", window.motorPromiseResolver)
+
+    if (running_motors.length === 0 && window.motorPromiseResolver !== undefined && window.motorPromiseResolver !== null) {
+        console.log("Resolving motors")
+        window.motorPromiseResolver()
+    } else {
+        console.log("Not resolving")
+    }
 })
