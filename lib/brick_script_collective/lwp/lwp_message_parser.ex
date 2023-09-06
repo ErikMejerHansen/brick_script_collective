@@ -91,6 +91,7 @@ defmodule BrickScriptCollective.Lwp.LwpMessageParser do
     case type_msb do
       <<0x3D>> -> :color_sensor
       <<0x3F>> -> :force_sensor
+      <<0x30>> -> :small_motor
       <<0x41>> -> :small_motor
       _ -> :unknown
     end

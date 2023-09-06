@@ -126,8 +126,6 @@ defmodule BrickScriptCollective.Lwp.RobotHandler do
   end
 
   def handle_vm_command(payload, state) do
-    IO.inspect("VM command")
-
     motor_ports =
       state.robot.ports
       |> Enum.filter(fn port -> match?(%{attachment: %{type: :small_motor}}, port) end)
