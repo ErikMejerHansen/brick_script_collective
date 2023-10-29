@@ -24,8 +24,7 @@ defmodule BrickScriptCollectiveWeb.LWPChannel do
   end
 
   def handle_in("robot_disconnected", payload, socket) do
-    # Signals that a robot has been connected in the browser
-    # Create RobotStateHandler and save its PID in socket.assigns
+    # Signals that a robot has been disconnected in the browser
     handler = socket.assigns.handler
     RobotHandler.robot_disconnected(handler, payload["robot_id"])
 
